@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+/* Highlight the active link */
+.active-link {
+  background-color: #007bff; /* Blue background for the active link */
+  color: white !important; /* White text for contrast */
+  font-weight: bold; /* Bold text for emphasis */
+  border-radius: 5px; /* Rounded corners for the background */
+  padding: 10px 15px; /* Add padding for spacing */
+  display: block; /* Ensure the background covers the entire link */
+}
