@@ -9,7 +9,8 @@ const navItems = [
   { to: '/excel/introduction', label: 'Excel Introduction' },
   { to: '/excel/getstarted', label: 'Excel Get Started' },
   { to: '/excel/overview', label: 'Excel Overview' },
-  { to: '/excel/syntax', label: 'Excel Syntax' }
+  { to: '/excel/syntax', label: 'Excel Syntax' },
+  { to: '/excel/ranges', label: 'Excel Ranges' }
 ];
 
 export default function Layout({ children }) {
