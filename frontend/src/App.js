@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import ExcelIntroduction from './pages/Excelintroduction';
 import ExcelGetStarted from './pages/Excelgetstarted';
 import ExcelOverview from './pages/Exceloverview';
+import ExcelSyntax from './pages/Excelsyntax';
 import './App.css'; 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path="/excel/introduction" element={<ExcelIntroduction />} />
           <Route path="/excel/getstarted" element={<ExcelGetStarted />} />
           <Route path="/excel/overview" element={<ExcelOverview />} />
+          <Route path="/excel/syntax" element={<ExcelSyntax />} />
         </Routes>
       </Layout>
     </Router>
