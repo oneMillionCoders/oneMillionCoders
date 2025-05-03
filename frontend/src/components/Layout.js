@@ -1,5 +1,5 @@
 // src/components/Layout.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import '../App.css';
 
@@ -9,9 +9,10 @@ const careers = [
 
 const careerPaths = {
   daa: [
-    { to: 'excel',  label: 'Excel' },
-    { to: 'sql',    label: 'SQL' },
-    { to: 'python', label: 'Python' },
+    { to: 'excel',    label: 'Excel'    },
+    { to: 'sql',      label: 'SQL'      },
+    { to: 'python',   label: 'Python'   },
+    { to: 'Power BI', label: 'Power BI' },
   ]
 };
 
@@ -34,81 +35,102 @@ const excelTopics = [
 
 export default function Layout({ children }) {
   const { pathname } = useLocation();
-  const segs = pathname.split('/').filter(Boolean);
 
-  const inDAA       = segs[0] === 'careers' && segs[1] === 'data-analyst-associate';
+  // 1) split & decode so "%20" → " "
+  const segs = pathname
+    .split('/')
+    .filter(Boolean)
+    .map(s => decodeURIComponent(s));
+
+  // 2) detect that we're in DAA
+  const inDAA = segs[0] === 'careers' && segs[1] === 'data-analyst-associate';
+
+  // 3) the full “sub‑path” for prev/next logic
   const currentPath = segs.slice(2).join('/');
-  const inExcel     = currentPath.startsWith('excel');
-  const sidebarItems= inDAA && inExcel ? excelTopics : careerPaths.daa;
 
-  // only include children of any item that has children
+  // 4) look only at the top‑level section name
+  const section = segs[2] || '';
+  const sectionLower = section.toLowerCase();
+
+  const inExcel = sectionLower === 'excel';
+  const inSQL = sectionLower === 'sql';
+  const inPython = sectionLower === 'python';
+  const inPowerBI = sectionLower === 'power bi';
+
+  // 5) sidebarItems exactly as before — but now our inPowerBI really works
+  const sidebarItems = useMemo(() => {
+    if (!inDAA) return [];
+    if (inExcel) return excelTopics;
+    if (inPowerBI) return [{ to: 'power BI', label: 'Power BI' }];
+    if (inSQL) return [{ to: 'sql', label: 'SQL' }];
+    if (inPython) return [{ to: 'python', label: 'Python' }];
+    return careerPaths.daa;
+  }, [inDAA, inExcel, inPowerBI, inSQL, inPython]);
+
+  // Flatten sidebarItems for prev/next logic
   const flatItems = sidebarItems.flatMap(item =>
     item.children ? item.children : [item]
   );
 
+  // Find the current index in flatItems
   const currentIndex = flatItems.findIndex(item => item.to === currentPath);
-  const prevItem     = currentIndex > 0 ? flatItems[currentIndex - 1] : null;
-  const nextItem     = currentIndex < flatItems.length - 1 ? flatItems[currentIndex + 1] : null;
 
+  // Determine prevItem and nextItem
+  const prevItem = currentIndex > 0 ? flatItems[currentIndex - 1] : null;
+  const nextItem = currentIndex < flatItems.length - 1 ? flatItems[currentIndex + 1] : null;
+
+  // Heights & link builder (encoding on output)
   const H1 = 56, H2 = inDAA ? 40 : 0;
   const buildLink = item => `/careers/data-analyst-associate/${item.to}`;
 
+  // Sidebar menu‑open state
   const [openMenus, setOpenMenus] = useState({});
-
-  // auto‑open exactly those menus whose child matches the currentPath,
-  // and collapse all others
   useEffect(() => {
     const newOpen = {};
     sidebarItems.forEach(item => {
       if (item.children) {
-        item.children.forEach(child => {
-          if (child.to === currentPath) {
-            newOpen[item.to] = true;
-          }
+        item.children.forEach(ch => {
+          if (ch.to === currentPath) newOpen[item.to] = true;
         });
       }
     });
     setOpenMenus(newOpen);
   }, [currentPath, sidebarItems]);
 
-  // after every navigation, wait until paint, then jump to top
+  // Scroll‑to‑top on nav
   useEffect(() => {
     const t = setTimeout(() => window.scrollTo(0, 0), 0);
     return () => clearTimeout(t);
   }, [pathname]);
 
-  const toggleMenu = key =>
-    setOpenMenus(prev => ({ ...prev, [key]: !prev[key] }));
+  const toggleMenu = key => setOpenMenus(m => ({ ...m, [key]: !m[key] }));
 
   return (
     <>
-      {/* Primary navbar */}
+      {/* primary nav */}
       <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark px-4" style={{ height: H1 }}>
         <Link className="navbar-brand" to="/">OneMillionCoders</Link>
-        <div className="collapse navbar-collapse">
-          <ul className="navbar-nav">
-            {careers.map(c => (
-              <li key={c.key} className="nav-item">
-                <NavLink to={c.to} className={({ isActive }) => 'nav-link' + (isActive ? ' active-link' : '')}>
-                  {c.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <ul className="navbar-nav">
+          {careers.map(c => (
+            <li key={c.key} className="nav-item">
+              <NavLink to={c.to} className={({ isActive }) => 'nav-link' + (isActive ? ' active-link' : '')}>
+                {c.label}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
       </nav>
 
-      {/* Sub‑navbar */}
+      {/* sub‑navbar */}
       {inDAA && (
         <nav className="navbar navbar-light bg-light px-4" style={{
-          position: 'fixed', top: H1, height: H2, width: '100%',
-          zIndex: 1030, borderBottom: '1px solid #ddd'
+          position: 'fixed', top: H1, height: H2, width: '100%', zIndex: 1030, borderBottom: '1px solid #ddd'
         }}>
           <ul className="navbar-nav flex-row">
             {careerPaths.daa.map(p => (
               <li key={p.to} className="nav-item me-3">
                 <NavLink
-                  to={`/careers/data-analyst-associate/${p.to}`}
+                  to={`/careers/data-analyst-associate/${encodeURIComponent(p.to)}`}
                   className={({ isActive }) => 'nav-link' + (isActive ? ' active-link' : '')}
                 >
                   {p.label}
@@ -119,21 +141,20 @@ export default function Layout({ children }) {
         </nav>
       )}
 
-      {/* Layout grid */}
+      {/* layout grid */}
       <div className="container-fluid p-0" style={{ marginTop: H1 + H2 }}>
         <div className="row g-0">
-          {/* Sidebar */}
+          {/* sidebar */}
           {inDAA && (
             <aside className="d-none d-md-block bg-light border-end p-3" style={{
-              position: 'fixed', top: H1 + H2, bottom: 0,
-              width: '16.666667%', overflowY: 'auto',
+              position: 'fixed', top: H1 + H2, bottom: 0, width: '15%', overflowY: 'auto'
             }}>
               <ul className="nav nav-pills flex-column">
                 {sidebarItems.map(item => {
                   const hasChildren = Array.isArray(item.children);
                   const isOpen = openMenus[item.to];
                   return (
-                    <li key={item.to} className="nav-item mb-2">
+                    <li key={item.to} className="nav-item">
                       {hasChildren ? (
                         <>
                           <button
@@ -144,13 +165,13 @@ export default function Layout({ children }) {
                           </button>
                           {isOpen && (
                             <ul className="nav flex-column ms-3 mt-2">
-                              {item.children.map(child => (
-                                <li key={child.to}>
+                              {item.children.map(ch => (
+                                <li key={ch.to}>
                                   <NavLink
-                                    to={buildLink(child)}
+                                    to={buildLink(ch)}
                                     className={({ isActive }) => 'nav-link small' + (isActive ? ' active-link' : '')}
                                   >
-                                    {child.label}
+                                    {ch.label}
                                   </NavLink>
                                 </li>
                               ))}
@@ -173,28 +194,46 @@ export default function Layout({ children }) {
             </aside>
           )}
 
-          {/* Main content */}
+          {/* main */}
           <main className={inDAA ? 'col-md-10 offset-md-2 p-4' : 'col-12 p-4'} style={{ minHeight: '100vh' }}>
-            {/* Top nav */}
+            {/* top prev/next */}
             <div className="d-flex justify-content-between mb-4">
-              {prevItem
-                ? <Link to={buildLink(prevItem)} className="btn btn-outline-primary">&larr; {prevItem.label}</Link>
-                : <div />}
-              {nextItem
-                ? <Link to={buildLink(nextItem)} className="btn btn-outline-primary">{nextItem.label} &rarr;</Link>
-                : <div />}
+              {!(inSQL || inPython || inPowerBI) && prevItem ? (
+                <Link to={buildLink(prevItem)} className="btn btn-outline-primary">
+                  ← {prevItem.label}
+                </Link>
+              ) : (
+                <div />
+              )}
+              {!(inSQL || inPython || inPowerBI) && nextItem ? (
+                <Link to={buildLink(nextItem)} className="btn btn-outline-primary">
+                  {nextItem.label} →
+                </Link>
+              ) : (
+                <div />
+              )}
             </div>
 
             {children}
 
-            {/* Bottom nav */}
+            {/* bottom prev/next or begin */}
             <div className="d-flex justify-content-between align-items-center mt-4">
-              {currentPath === 'excel'
-                ? <Link to={buildLink({ to: 'excel/introduction' })} className="btn btn-primary btn-lg">Begin Lesson →</Link>
-                : prevItem && <Link to={buildLink(prevItem)} className="btn btn-outline-primary">&larr; {prevItem.label}</Link>}
-              {nextItem
-                ? <Link to={buildLink(nextItem)} className="btn btn-outline-primary">{nextItem.label} &rarr;</Link>
-                : <div />}
+              {currentPath === 'excel' && !(inSQL || inPython || inPowerBI) ? (
+                <Link to={buildLink({ to: 'excel/introduction' })} className="btn btn-primary btn-lg">
+                  Begin Lesson →
+                </Link>
+              ) : (
+                !(inSQL || inPython || inPowerBI) && prevItem && ( // Hide the previous button for SQL, Python, and Power BI
+                  <Link to={buildLink(prevItem)} className="btn btn-outline-primary">
+                    ← {prevItem.label}
+                  </Link>
+                )
+              )}
+              {!(inSQL || inPython || inPowerBI) && nextItem && ( // Hide the next button for SQL, Python, and Power BI
+                <Link to={buildLink(nextItem)} className="btn btn-outline-primary">
+                  {nextItem.label} →
+                </Link>
+              )}
             </div>
           </main>
         </div>

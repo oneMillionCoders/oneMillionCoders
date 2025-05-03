@@ -46,6 +46,9 @@ function App() {
 
             {/* Python path */}
             <Route path="python" element={<Placeholder label="Python" />} />
+
+            {/* Power BI path */}
+            <Route path="power BI" element={<Placeholder label="Power BI" />} />
           </Route>
 
           {/* catch‑all */}
