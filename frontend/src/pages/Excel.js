@@ -1,13 +1,12 @@
 // src/pages/Excel.js
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 export default function Excel() {
   const sampleData = [
-    [309,39],
-    [320,35],
-    [318,45],
-    [314,44]
+    [309, 39],
+    [320, 35],
+    [318, 45],
+    [314, 44]
   ];
 
   const handleCopy = () => {
@@ -27,21 +26,14 @@ export default function Excel() {
 
       <hr className="my-4" />
 
-      <p>
-        <h2>Copy Values Tool</h2>
-        Example values can be copied from the tutorial and into your spreadsheet, making it easy for you to tag along step-by-step:
-      </p>
-
       <section className="mb-5">
-        <h2 className="h5">Practice Data</h2>
+        <h2>Copy Values Tool</h2>
         <p>Click the button below to copy the table values</p>
 
-        {/* Copy Button */}
         <button className="btn btn-outline-secondary mb-3" onClick={handleCopy}>
           📋 Copy Table Values
         </button>
 
-        {/* Table Image */}
         <div className="text-center">
           <img
             src="https://www.w3schools.com/excel/move_cells.png"
@@ -62,22 +54,17 @@ export default function Excel() {
           <li>• Design charts & pivot tables</li>
         </ul>
 
-        <p><h2 className="h5">Why Study Excel?</h2>
-        Excel is a powerful tool used across industries for a variety of tasks.<br/>
-        Example use areas:<br/>
+        <h2 className="h5">Why Study Excel?</h2>
+        <p>
+          Excel is a powerful tool used across industries for a variety of tasks.
+          Example use areas:
+        </p>
         <ol>
-       <li>Data analytics</li> 
-       <li>Project management</li>
-       <li>Finance and accounting</li>
+          <li>Data analytics</li>
+          <li>Project management</li>
+          <li>Finance and accounting</li>
         </ol>
-
-</p>
-
       </section>
-
-      <Link className="btn btn-primary btn-lg" to="/excel/introduction">
-        Begin Lesson →
-      </Link>
     </div>
   );
 }

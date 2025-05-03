@@ -47,6 +47,27 @@
   display: block;             /* Ensure the background covers the entire link */
 }
 
+/* Ensure the active link has a proper blue background and alignment */
+.navbar-nav .nav-link.active-link {
+  background-color: #007bff; /* Blue background for active link */
+  color: #fff !important; /* White text for active link */
+  padding: 6px 10px; /* Reduce padding for smaller size */
+  border-radius: 4px; /* Rounded corners */
+  margin: 0; /* Remove any extra margin */
+  display: inline-block; /* Ensure the background only covers the text */
+  text-align: center; /* Center-align the text */
+}
+
+/* Adjust spacing for the secondary navigation bar */
+.navbar-light .navbar-nav {
+  margin-top: -4px; /* Move items slightly up */
+}
+
+/* Prevent the active link background from overlapping the sidebar */
+.navbar-nav.flex-row .nav-item {
+  margin-right: 16px; /* Add spacing between items */
+}
+
 /* ── Sidebar toggle button ─────────────────────────────────────────────────── */
 .btn-toggle {
   background: none;
