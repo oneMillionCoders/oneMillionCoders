@@ -5,6 +5,8 @@ import '../App.css';
 
 const careers = [
   { to: '/careers/data-analyst-associate', label: 'Data Analyst Associate', key: 'daa' },
+  { to: '/careers/cybersecurity-professional', label: 'Cybersecurity Professional', key: 'csp' },
+  { to: '/careers/network-support-technician', label: 'Network Support Technician', key: 'nst' }, // New section
 ];
 
 const careerPaths = {
@@ -13,7 +15,19 @@ const careerPaths = {
     { to: 'sql',      label: 'SQL'      },
     { to: 'python',   label: 'Python'   },
     { to: 'Power BI', label: 'Power BI' },
-  ]
+  ],
+  csp: [ // New career path
+    { to: 'network-security', label: 'Network Security' },
+    { to: 'cryptography', label: 'Cryptography' },
+    { to: 'incident-response', label: 'Incident Response' },
+    { to: 'ethical-hacking', label: 'Ethical Hacking' },
+  ],
+  nst: [ // New career path
+    { to: 'networking-basics', label: 'Networking Basics' },
+    { to: 'networking-devices', label: 'Networking Devices and Initial Configuration' },
+    { to: 'network-addressing', label: 'Network Addressing and Basic Troubleshooting' },
+    { to: 'network-support-security', label: 'Network Support and Security' },
+  ],
 };
 
 const excelTopics = [
@@ -42,8 +56,10 @@ export default function Layout({ children }) {
     .filter(Boolean)
     .map(s => decodeURIComponent(s));
 
-  // 2) detect that we're in DAA
+  // 2) detect that we're in DAA, CSP, or NST
   const inDAA = segs[0] === 'careers' && segs[1] === 'data-analyst-associate';
+  const inCSP = segs[0] === 'careers' && segs[1] === 'cybersecurity-professional';
+  const inNST = segs[0] === 'careers' && segs[1] === 'network-support-technician';
 
   // 3) the full “sub‑path” for prev/next logic
   const currentPath = segs.slice(2).join('/');
@@ -57,15 +73,23 @@ export default function Layout({ children }) {
   const inPython = sectionLower === 'python';
   const inPowerBI = sectionLower === 'power bi';
 
-  // 5) sidebarItems exactly as before — but now our inPowerBI really works
+  // 5) sidebarItems logic
   const sidebarItems = useMemo(() => {
-    if (!inDAA) return [];
-    if (inExcel) return excelTopics;
-    if (inPowerBI) return [{ to: 'power BI', label: 'Power BI' }];
-    if (inSQL) return [{ to: 'sql', label: 'SQL' }];
-    if (inPython) return [{ to: 'python', label: 'Python' }];
-    return careerPaths.daa;
-  }, [inDAA, inExcel, inPowerBI, inSQL, inPython]);
+    if (inDAA) {
+      if (inExcel) return excelTopics;
+      if (inPowerBI) return [{ to: 'power BI', label: 'Power BI' }];
+      if (inSQL) return [{ to: 'sql', label: 'SQL' }];
+      if (inPython) return [{ to: 'python', label: 'Python' }];
+      return careerPaths.daa;
+    }
+    if (inCSP) {
+      return careerPaths.csp; // Use the CSP topics
+    }
+    if (inNST) {
+      return careerPaths.nst; // Use the NST topics
+    }
+    return [];
+  }, [inDAA, inCSP, inNST, inExcel, inPowerBI, inSQL, inPython]);
 
   // Flatten sidebarItems for prev/next logic
   const flatItems = sidebarItems.flatMap(item =>
@@ -80,8 +104,13 @@ export default function Layout({ children }) {
   const nextItem = currentIndex < flatItems.length - 1 ? flatItems[currentIndex + 1] : null;
 
   // Heights & link builder (encoding on output)
-  const H1 = 56, H2 = inDAA ? 40 : 0;
-  const buildLink = item => `/careers/data-analyst-associate/${item.to}`;
+  const H1 = 56, H2 = inDAA || inCSP || inNST ? 47 : 0;
+  const buildLink = item => {
+    if (inDAA) return `/careers/data-analyst-associate/${item.to}`;
+    if (inCSP) return `/careers/cybersecurity-professional/${item.to}`;
+    if (inNST) return `/careers/network-support-technician/${item.to}`;
+    return '#';
+  };
 
   // Sidebar menu‑open state
   const [openMenus, setOpenMenus] = useState({});
@@ -122,15 +151,15 @@ export default function Layout({ children }) {
       </nav>
 
       {/* sub‑navbar */}
-      {inDAA && (
+      {(inDAA || inCSP || inNST) && (
         <nav className="navbar navbar-light bg-light px-4" style={{
           position: 'fixed', top: H1, height: H2, width: '100%', zIndex: 1030, borderBottom: '1px solid #ddd'
         }}>
           <ul className="navbar-nav flex-row">
-            {careerPaths.daa.map(p => (
+            {(inDAA ? careerPaths.daa : inCSP ? careerPaths.csp : careerPaths.nst).map(p => (
               <li key={p.to} className="nav-item me-3">
                 <NavLink
-                  to={`/careers/data-analyst-associate/${encodeURIComponent(p.to)}`}
+                  to={buildLink(p)}
                   className={({ isActive }) => 'nav-link' + (isActive ? ' active-link' : '')}
                 >
                   {p.label}
@@ -145,7 +174,7 @@ export default function Layout({ children }) {
       <div className="container-fluid p-0" style={{ marginTop: H1 + H2 }}>
         <div className="row g-0">
           {/* sidebar */}
-          {inDAA && (
+          {(inDAA || inCSP || inNST) && (
             <aside className="d-none d-md-block bg-light border-end p-3" style={{
               position: 'fixed', top: H1 + H2, bottom: 0, width: '15%', overflowY: 'auto'
             }}>
@@ -195,41 +224,33 @@ export default function Layout({ children }) {
           )}
 
           {/* main */}
-          <main className={inDAA ? 'col-md-10 offset-md-2 p-4' : 'col-12 p-4'} style={{ minHeight: '100vh' }}>
+          <main className={inDAA || inCSP || inNST ? 'col-md-10 offset-md-2 p-4' : 'col-12 p-4'} style={{ minHeight: '100vh' }}>
             {/* top prev/next */}
             <div className="d-flex justify-content-between mb-4">
-              {!(inSQL || inPython || inPowerBI) && prevItem ? (
-                <Link to={buildLink(prevItem)} className="btn btn-outline-primary">
-                  ← {prevItem.label}
-                </Link>
-              ) : (
-                <div />
-              )}
-              {!(inSQL || inPython || inPowerBI) && nextItem ? (
-                <Link to={buildLink(nextItem)} className="btn btn-outline-primary">
-                  {nextItem.label} →
-                </Link>
-              ) : (
-                <div />
-              )}
+              {prevItem
+                ? <Link to={buildLink(prevItem)} className="btn btn-outline-primary">← {prevItem.label}</Link>
+                : <div />}
+              {nextItem
+                ? <Link to={buildLink(nextItem)} className="btn btn-outline-primary">{nextItem.label} →</Link>
+                : <div />}
             </div>
 
             {children}
 
             {/* bottom prev/next or begin */}
             <div className="d-flex justify-content-between align-items-center mt-4">
-              {currentPath === 'excel' && !(inSQL || inPython || inPowerBI) ? (
+              {currentPath === 'excel' ? (
                 <Link to={buildLink({ to: 'excel/introduction' })} className="btn btn-primary btn-lg">
                   Begin Lesson →
                 </Link>
               ) : (
-                !(inSQL || inPython || inPowerBI) && prevItem && ( // Hide the previous button for SQL, Python, and Power BI
+                prevItem && (
                   <Link to={buildLink(prevItem)} className="btn btn-outline-primary">
                     ← {prevItem.label}
                   </Link>
                 )
               )}
-              {!(inSQL || inPython || inPowerBI) && nextItem && ( // Hide the next button for SQL, Python, and Power BI
+              {nextItem && (
                 <Link to={buildLink(nextItem)} className="btn btn-outline-primary">
                   {nextItem.label} →
                 </Link>

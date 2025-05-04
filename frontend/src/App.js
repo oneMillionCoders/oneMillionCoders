@@ -51,6 +51,15 @@ function App() {
             <Route path="power BI" element={<Placeholder label="Power BI" />} />
           </Route>
 
+          {/* Cybersecurity Professional */}
+          <Route path="careers/cybersecurity-professional">
+            <Route index element={<Navigate to="network-security" replace />} />
+            <Route path="network-security" element={<Placeholder label="Network Security" />} />
+            <Route path="cryptography" element={<Placeholder label="Cryptography" />} />
+            <Route path="incident-response" element={<Placeholder label="Incident Response" />} />
+            <Route path="ethical-hacking" element={<Placeholder label="Ethical Hacking" />} />
+          </Route>
+
           {/* catch‑all */}
           <Route path="*" element={<h1>Page Not Found</h1>} />
         </Routes>
