@@ -108,3 +108,16 @@
 .btn-toggle + .collapse {
   margin-bottom: .5rem;
 }
+
+body {
+  background-color: #f8f9fa; /* Light background */
+}
+
+.card {
+  border-radius: 10px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+}

@@ -1,6 +1,7 @@
 // src/App.js
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout.js';
+import Login from './pages/Login';
 
 // Excel pages
 import Excel          from './pages/Excel';
@@ -20,8 +21,11 @@ function App() {
     <Router>
       <Layout>
         <Routes>
-          {/* default → DAA Excel */}
-          <Route path="/" element={<Navigate to="/careers/data-analyst-associate/excel" replace />} />
+          {/* Default route → Login */}
+          <Route path="/" element={<Login />} />
+
+          {/* Login route */}
+          <Route path="/login" element={<Login />} />
 
           <Route path="careers/data-analyst-associate">
             <Route index element={<Navigate to="excel" replace />} />
@@ -58,6 +62,15 @@ function App() {
             <Route path="cryptography" element={<Placeholder label="Cryptography" />} />
             <Route path="incident-response" element={<Placeholder label="Incident Response" />} />
             <Route path="ethical-hacking" element={<Placeholder label="Ethical Hacking" />} />
+          </Route>
+
+          {/* Network Support Technician */}
+          <Route path="careers/network-support-technician">
+            <Route index element={<Navigate to="networking-basics" replace />} />
+            <Route path="networking-basics" element={<Placeholder label="Networking Basics" />} />
+            <Route path="networking-devices" element={<Placeholder label="Networking Devices and Initial Configuration" />} />
+            <Route path="network-addressing" element={<Placeholder label="Network Addressing and Basic Troubleshooting" />} />
+            <Route path="network-support-security" element={<Placeholder label="Network Support and Security" />} />
           </Route>
 
           {/* catch‑all */}
