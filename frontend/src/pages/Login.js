@@ -2,20 +2,34 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState(''); // State for username
+  const [password, setPassword] = useState(''); // State for password
   const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [error, setError] = useState(''); // State for error messages
+  const navigate = useNavigate(); // React Router hook for navigation
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Simple authentication logic
-    if (username === 'user' && password === 'password') {
-      navigate('/careers/data-analyst-associate'); // Redirect to courses
-    } else {
-      setError('Invalid username or password');
+    try {
+      // Send login request to the backend
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Redirect to courses on successful login
+        navigate('/careers/data-analyst-associate');
+      } else {
+        setError(data.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      setError('An error occurred. Please try again.');
     }
   };
 
@@ -40,7 +54,7 @@ export default function Login() {
             <label htmlFor="password" className="form-label">Password</label>
             <div className="input-group">
               <input
-                type={showPassword ? 'text' : 'password'} // Toggle input type
+                type={showPassword ? 'text' : 'password'}
                 id="password"
                 className="form-control"
                 value={password}
@@ -50,9 +64,9 @@ export default function Login() {
               <button
                 type="button"
                 className="btn btn-outline-secondary"
-                onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+                onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? '🙈' : '👁️'} {/* Eye icon */}
+                {showPassword ? '🙈' : '👁️'}
               </button>
             </div>
           </div>
