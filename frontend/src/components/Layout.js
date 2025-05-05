@@ -178,7 +178,7 @@ export default function Layout({ children }) {
                 </li>
               ))}
             </ul>
-            <button className="btn btn-outline-light ms-3" onClick={handleLogout}>
+            <button className="btn btn-danger ms-auto" onClick={handleLogout}>
               Logout
             </button>
           </>
