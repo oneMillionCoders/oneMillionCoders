@@ -22,8 +22,10 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
+        localStorage.setItem('token', data.token); // Save the token
         // Redirect to courses on successful login
         navigate('/careers/data-analyst-associate');
+        window.dispatchEvent(new Event('storage')); // Trigger storage event manually
       } else {
         setError(data.message || 'Login failed');
       }

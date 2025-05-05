@@ -1,6 +1,6 @@
 // src/components/Layout.js
 import React, { useState, useEffect, useMemo } from 'react';
-import { NavLink, Link, useLocation } from 'react-router-dom';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import '../App.css';
 
 const careers = [
@@ -49,6 +49,34 @@ const excelTopics = [
 
 export default function Layout({ children }) {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+
+  // Sync `isLoggedIn` state with `localStorage`
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIsLoggedIn(!!localStorage.getItem('token'));
+    };
+
+    window.addEventListener('storage', handleStorageChange); // Listen for changes in localStorage
+    return () => window.removeEventListener('storage', handleStorageChange); // Cleanup listener
+  }, []);
+
+  // Redirect to login if not logged in
+  useEffect(() => {
+    if (!isLoggedIn && pathname !== '/login') {
+      navigate('/login', { replace: true }); // Redirect to login page
+    }
+  }, [isLoggedIn, pathname, navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Clear the token
+    setIsLoggedIn(false); // Update state
+    navigate('/login', { replace: true }); // Redirect to login page and replace history
+  };
+
+  // Determine if the current page is the login page
+  const isLoginPage = pathname === '/login';
 
   // 1) split & decode so "%20" → " "
   const segs = pathname
@@ -139,15 +167,22 @@ export default function Layout({ children }) {
       {/* primary nav */}
       <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark px-4" style={{ height: H1 }}>
         <Link className="navbar-brand" to="/">OneMillionCoders</Link>
-        <ul className="navbar-nav">
-          {careers.map(c => (
-            <li key={c.key} className="nav-item">
-              <NavLink to={c.to} className={({ isActive }) => 'nav-link' + (isActive ? ' active-link' : '')}>
-                {c.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
+        {!isLoginPage && isLoggedIn && (
+          <>
+            <ul className="navbar-nav">
+              {careers.map(c => (
+                <li key={c.key} className="nav-item">
+                  <NavLink to={c.to} className={({ isActive }) => 'nav-link' + (isActive ? ' active-link' : '')}>
+                    {c.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+            <button className="btn btn-outline-light ms-3" onClick={handleLogout}>
+              Logout
+            </button>
+          </>
+        )}
       </nav>
 
       {/* sub‑navbar */}
