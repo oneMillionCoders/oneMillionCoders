@@ -52,6 +52,18 @@ export default function Layout({ children }) {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
 
+  const [completedSections, setCompletedSections] = useState(
+    JSON.parse(localStorage.getItem('completedSections')) || []
+  );
+
+  const markSectionAsCompleted = (section) => {
+    if (!completedSections.includes(section)) {
+      const updatedSections = [...completedSections, section];
+      setCompletedSections(updatedSections);
+      localStorage.setItem('completedSections', JSON.stringify(updatedSections));
+    }
+  };
+
   // Sync `isLoggedIn` state with `localStorage`
   useEffect(() => {
     const handleStorageChange = () => {
@@ -213,21 +225,37 @@ export default function Layout({ children }) {
             <aside className="d-none d-md-block bg-light border-end p-3" style={{
               position: 'fixed', top: H1 + H2, bottom: 0, width: '15%', overflowY: 'auto'
             }}>
-              <ul className="nav nav-pills flex-column">
-                {sidebarItems.map(item => {
+              <ul className="nav nav-pills flex-column position-relative">
+                {sidebarItems.map((item, index) => {
                   const hasChildren = Array.isArray(item.children);
-                  const isOpen = openMenus[item.to];
+                  const isCompleted = completedSections.includes(item.to);
+                  const isLastItem = index === sidebarItems.length - 1;
+
                   return (
-                    <li key={item.to} className="nav-item">
+                    <li key={item.to} className="nav-item d-flex align-items-center position-relative">
+  {/* Checkmark */}
+  <div
+    className="checkmark-container"
+    style={{ justifyContent: 'flex-start' }}            // ← force top‑alignment
+  >
+    <div className={`checkmark ${isCompleted ? 'alive' : ''}`} />
+    {/* always render the line, but hide it on the last item */}
+    <div
+      className="vertical-line"
+      style={{ visibility: isLastItem ? 'hidden' : 'visible' }}
+    />
+  </div>
+
+                      {/* Sidebar Link */}
                       {hasChildren ? (
                         <>
                           <button
-                            className={'nav-link w-100 text-start' + (isOpen ? ' active-link' : '')}
+                            className={'nav-link w-100 text-start' + (openMenus[item.to] ? ' active-link' : '')}
                             onClick={() => toggleMenu(item.to)}
                           >
-                            {item.label} {isOpen ? '▲' : '▼'}
+                            {item.label}
                           </button>
-                          {isOpen && (
+                          {openMenus[item.to] && (
                             <ul className="nav flex-column ms-3 mt-2">
                               {item.children.map(ch => (
                                 <li key={ch.to}>
@@ -245,7 +273,7 @@ export default function Layout({ children }) {
                       ) : (
                         <NavLink
                           to={buildLink(item)}
-                          className={({ isActive }) => 'nav-link' + (isActive ? ' active-link' : '')}
+                          className={({ isActive }) => 'nav-link d-flex align-items-center' + (isActive ? ' active-link' : '')}
                           end
                         >
                           {item.label}
@@ -286,7 +314,11 @@ export default function Layout({ children }) {
                 )
               )}
               {nextItem && (
-                <Link to={buildLink(nextItem)} className="btn btn-outline-primary">
+                <Link
+                  to={buildLink(nextItem)}
+                  className="btn btn-outline-primary"
+                  onClick={() => markSectionAsCompleted(currentPath)}
+                >
                   {nextItem.label} →
                 </Link>
               )}

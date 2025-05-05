@@ -1,3 +1,4 @@
+/* ── your existing resets & App styles ───────────────────────────────────── */
 .App {
   text-align: center;
 }
@@ -29,43 +30,36 @@
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-/* Highlight the active link */
+/* ── Navbar active‐link highlighting ───────────────────────────────────────── */
 .active-link {
-  background-color: #007bff; /* Blue background for the active link */
-  color: white !important;    /* White text for contrast */
-  font-weight: bold;          /* Bold text for emphasis */
-  border-radius: 5px;         /* Rounded corners for the background */
-  padding: 10px 15px;         /* Add padding for spacing */
-  display: block;             /* Ensure the background covers the entire link */
+  background-color: #007bff;
+  color: white !important;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 10px 15px;
+  display: block;
 }
 
-/* Ensure the active link has a proper blue background and alignment */
 .navbar-nav .nav-link.active-link {
-  background-color: #007bff; /* Blue background for active link */
-  color: #fff !important; /* White text for active link */
-  padding: 6px 10px; /* Reduce padding for smaller size */
-  border-radius: 4px; /* Rounded corners */
-  margin: 0; /* Remove any extra margin */
-  display: inline-block; /* Ensure the background only covers the text */
-  text-align: center; /* Center-align the text */
+  background-color: #007bff;
+  color: #fff !important;
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin: 0;
+  display: inline-block;
+  text-align: center;
 }
 
-/* Adjust spacing for the secondary navigation bar */
 .navbar-light .navbar-nav {
-  margin-top: -4px; /* Move items slightly up */
+  margin-top: -4px;
 }
 
-/* Prevent the active link background from overlapping the sidebar */
 .navbar-nav.flex-row .nav-item {
-  margin-right: 16px; /* Add spacing between items */
+  margin-right: 16px;
 }
 
 /* ── Sidebar toggle button ─────────────────────────────────────────────────── */
@@ -81,7 +75,6 @@
 .btn-toggle:hover {
   background-color: #e2e6ea;
 }
-/* arrow down when open, arrow right when collapsed */
 .btn-toggle::after {
   content: '▾';
   float: right;
@@ -103,21 +96,103 @@
   display: block;
   padding: .25rem 1rem;
 }
-
-/* Optional: visually separate the group header from links */
 .btn-toggle + .collapse {
   margin-bottom: .5rem;
 }
 
+/* ── General page look ─────────────────────────────────────────────────────── */
 body {
-  background-color: #f8f9fa; /* Light background */
+  background-color: #f8f9fa;
 }
-
 .card {
   border-radius: 10px;
 }
-
 .btn-primary {
   background-color: #007bff;
   border: none;
+}
+
+/* ── Sidebar items with checkmarks ────────────────────────────────────────── */
+/* wrapper for each item */
+.nav-item {
+  display: flex;
+  align-items: flex-start;   /* keep items top-aligned so we can offset checkmarks */
+  margin-bottom: 10px;
+  position: relative;
+}
+
+/* container for circle + line */
+.checkmark-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 10px;
+  align-self: stretch;        /* let the line span full item height */
+  position: relative;         /* for absolute line positioning */
+  top: 15px;                  /* nudge circles down to align with text */
+}
+
+/* the circle */
+.checkmark {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  background-color: #fff;
+  position: relative;
+  flex-shrink: 0;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+/* the check inside when “alive” */
+.checkmark.alive {
+  border-color: #007bff;
+  background-color: #007bff;
+}
+.checkmark.alive::after {
+  content: '✔';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  font-size: 12px;
+  color: #fff;
+}
+
+/* the vertical line stretching down */
+.vertical-line {
+  position: absolute;
+  top: 18px;      /* start just below the circle */
+  bottom: -15px;  /* extend into the next container by same offset */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  background-color: #ccc;
+  transition: background-color 0.3s;
+}
+.checkmark.alive + .vertical-line {
+  background-color: #007bff;
+}
+
+/* ── navigation buttons at bottom ─────────────────────────────────────────── */
+.d-flex {
+  display: flex !important;
+}
+.justify-content-between {
+  justify-content: space-between !important;
+}
+.align-items-center {
+  align-items: center !important;
+}
+.mt-4 {
+  margin-top: 1.5rem !important;
+}
+.btn-outline-primary {
+  color: #007bff;
+  border-color: #007bff;
+}
+.btn-outline-primary:hover {
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
 }
