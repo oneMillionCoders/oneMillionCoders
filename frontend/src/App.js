@@ -4,13 +4,13 @@ import Layout from './components/Layout.js';
 import Login from './pages/Login';
 
 // Excel pages
-import Excel          from './pages/Excel';
+import Excel from './pages/Excel';
 import ExcelIntroduction from './pages/Excelintroduction';
-import ExcelGetStarted   from './pages/Excelgetstarted';
-import ExcelOverview     from './pages/Exceloverview';
-import ExcelSyntax       from './pages/Excelsyntax';
-import ExcelRanges       from './pages/Excelranges';
-import FillingPage       from './pages/Fillingpage';
+import ExcelGetStarted from './pages/Excelgetstarted';
+import ExcelOverview from './pages/Exceloverview';
+import ExcelSyntax from './pages/Excelsyntax';
+import ExcelRanges from './pages/Excelranges';
+import FillingPage from './pages/Fillingpage';
 import DoubleClickFillPage from './pages/Doubleclickpage';
 
 // placeholders for SQL/Python until you build them
@@ -34,26 +34,23 @@ function App() {
             <Route path="excel">
               <Route index element={<Excel />} />
               <Route path="introduction" element={<ExcelIntroduction />} />
-              <Route path="getstarted"   element={<ExcelGetStarted />} />
-              <Route path="overview"     element={<ExcelOverview />} />
-              <Route path="syntax"       element={<ExcelSyntax />} />
-              <Route path="ranges"       element={<ExcelRanges />} />
-              <Route path="fill">
-                <Route index element={<Navigate to="filling" replace />} />
-                <Route path="filling"      element={<FillingPage />} />
-                <Route path="double-click" element={<DoubleClickFillPage />} />
-              </Route>
+              <Route path="getstarted" element={<ExcelGetStarted />} />
+              <Route path="overview" element={<ExcelOverview />} />
+              <Route path="syntax" element={<ExcelSyntax />} />
+              <Route path="ranges" element={<ExcelRanges />} />
+              <Route path="fill/filling" element={<FillingPage />} />
+              <Route path="fill/double-click" element={<DoubleClickFillPage />} />
             </Route>
-
-            {/* SQL path */}
-            <Route path="sql" element={<Placeholder label="SQL" />} />
-
-            {/* Python path */}
-            <Route path="python" element={<Placeholder label="Python" />} />
-
-            {/* Power BI path */}
-            <Route path="power BI" element={<Placeholder label="Power BI" />} />
           </Route>
+
+          {/* SQL path */}
+          <Route path="sql" element={<Placeholder label="SQL" />} />
+
+          {/* Python path */}
+          <Route path="python" element={<Placeholder label="Python" />} />
+
+          {/* Power BI path */}
+          <Route path="power BI" element={<Placeholder label="Power BI" />} />
 
           {/* Cybersecurity Professional */}
           <Route path="careers/cybersecurity-professional">

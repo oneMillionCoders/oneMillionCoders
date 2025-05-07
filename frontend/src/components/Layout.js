@@ -37,14 +37,8 @@ const excelTopics = [
   { to: 'excel/overview',      label: 'Excel Overview' },
   { to: 'excel/syntax',        label: 'Excel Syntax' },
   { to: 'excel/ranges',        label: 'Excel Ranges' },
-  {
-    to: 'excel/fill',
-    label: 'Excel Fill',
-    children: [
-      { to: 'excel/fill/filling',      label: 'Filling' },
-      { to: 'excel/fill/double-click', label: 'Double Click to Fill' },
-    ],
-  },
+  { to: 'excel/fill/filling',  label: 'Filling' }, // Removed child structure
+  { to: 'excel/fill/double-click', label: 'Double Click to Fill' }, // Removed child structure
 ];
 
 export default function Layout({ children }) {
