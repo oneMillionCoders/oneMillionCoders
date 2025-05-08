@@ -45,18 +45,32 @@ export default function Layout({ children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  const [completedSections, setCompletedSections] = useState([]);
 
-  const [completedSections, setCompletedSections] = useState(
-    JSON.parse(localStorage.getItem('completedSections')) || []
-  );
+  // Fetch completed sections from the backend on app load
+  useEffect(() => {
+    const fetchCompletedSections = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:5000/api/completed-sections', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Fetched completed sections:', data.completed_sections); // Debug log
+          setCompletedSections(data.completed_sections);
+        } else {
+          console.error('Failed to fetch completed sections');
+        }
+      } catch (error) {
+        console.error('Error fetching completed sections:', error);
+      }
+    };
 
-  const markSectionAsCompleted = (section) => {
-    if (!completedSections.includes(section)) {
-      const updatedSections = [...completedSections, section];
-      setCompletedSections(updatedSections);
-      localStorage.setItem('completedSections', JSON.stringify(updatedSections));
+    if (isLoggedIn) {
+      fetchCompletedSections();
     }
-  };
+  }, [isLoggedIn]);
 
   // Sync `isLoggedIn` state with `localStorage`
   useEffect(() => {
@@ -167,6 +181,38 @@ export default function Layout({ children }) {
   }, [pathname]);
 
   const toggleMenu = key => setOpenMenus(m => ({ ...m, [key]: !m[key] }));
+
+  const handleNextClick = async () => {
+    // Mark the current section as completed
+    if (!completedSections.includes(currentPath)) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:5000/api/complete-section', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ section: currentPath }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Updated completed sections from backend:', data.completed_sections);
+          setCompletedSections(data.completed_sections);
+        } else {
+          console.error('Failed to update completed section.');
+        }
+      } catch (error) {
+        console.error('Error updating completed section:', error);
+      }
+    }
+
+    // Navigate to the next page
+    if (nextItem) {
+      navigate(buildLink(nextItem));
+    }
+  };
 
   return (
     <>
@@ -288,7 +334,7 @@ export default function Layout({ children }) {
                 ? <Link to={buildLink(prevItem)} className="btn btn-outline-primary">← {prevItem.label}</Link>
                 : <div />}
               {nextItem
-                ? <Link to={buildLink(nextItem)} className="btn btn-outline-primary">{nextItem.label} →</Link>
+                ? <Link to={buildLink(nextItem)} className="btn btn-outline-primary" onClick={handleNextClick}>{nextItem.label} →</Link>
                 : <div />}
             </div>
 
@@ -308,13 +354,12 @@ export default function Layout({ children }) {
                 )
               )}
               {nextItem && (
-                <Link
-                  to={buildLink(nextItem)}
+                <button
                   className="btn btn-outline-primary"
-                  onClick={() => markSectionAsCompleted(currentPath)}
+                  onClick={handleNextClick} // Attach the click handler here
                 >
                   {nextItem.label} →
-                </Link>
+                </button>
               )}
             </div>
           </main>

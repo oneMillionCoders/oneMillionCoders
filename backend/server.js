@@ -103,6 +103,92 @@ app.post('/api/users', authenticateAdmin, async (req, res) => {
   }
 });
 
+
+
+
+
+
+// Middleware to authenticate any logged‑in user (not just admin)
+async function authenticateUser(req, res, next) {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'No token provided' });
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.userId = decoded.userId;
+    next();
+  } catch (err) {
+    console.error('Auth error:', err);
+    res.status(401).json({ message: 'Invalid token' });
+  }
+}
+
+// GET completed‑sections
+app.get(
+  '/api/completed-sections',
+  authenticateUser,
+  async (req, res) => {
+    try {
+      const result = await pool.query(
+        'SELECT completed_sections FROM users WHERE id = $1',
+        [req.userId]
+      );
+      if (!result.rows.length) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      res.json({ completed_sections: result.rows[0].completed_sections });
+    } catch (err) {
+      console.error('Error fetching completed sections:', err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+);
+
+// POST complete‑section
+app.post(
+  '/api/complete-section',
+  authenticateUser,
+  async (req, res) => {
+    const { section } = req.body;
+    if (typeof section !== 'string') {
+      return res.status(400).json({ message: 'Section must be a string' });
+    }
+
+    try {
+      // Append the section if it’s not already present
+      const update = await pool.query(
+        `UPDATE users
+         SET completed_sections = 
+           CASE
+             WHEN NOT (completed_sections @> to_jsonb($2::text) :: jsonb) 
+             THEN completed_sections || to_jsonb($2::text) :: jsonb
+             ELSE completed_sections
+           END
+         WHERE id = $1
+         RETURNING completed_sections`,
+        [req.userId, section]
+      );
+
+      if (!update.rows.length) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.json({ completed_sections: update.rows[0].completed_sections });
+    } catch (err) {
+      console.error('Error updating completed section:', err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+);
+
+
+
+
+
+
+
+
+
 // Start the server
 app.listen(5000, () => {
   console.log('✅ Server is running on http://localhost:5000');
