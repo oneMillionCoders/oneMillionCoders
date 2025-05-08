@@ -36,8 +36,24 @@ export default function Login() {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 bg-light" style={{ marginTop: '-100px' }}>
-      <div className="card p-4 shadow" style={{ width: '400px' }}>
+    <div 
+      className="d-flex justify-content-center align-items-center" 
+      style={{ 
+        position: 'fixed',     // ← take it out of the normal flow 
+        top: 0,                // ← anchor to the very top 
+        left: 0,               // ← and the very left 
+        width: '100%',         // ← span the full viewport width 
+        height: '100%',        // ← span the full viewport height 
+        margin: 0,             // ← override any parent margins 
+        padding: 0,            // ← override any parent padding 
+        backgroundImage: "url('/images/background3.png')", 
+        backgroundSize: 'cover', 
+        backgroundPosition: 'top', 
+        backgroundRepeat: 'no‑repeat',
+        backgroundAttachment: 'scroll',
+      }} 
+    >
+      <div className="card p-4 shadow" style={{ width: '400px', backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>
         <h2 className="text-center mb-4">Login</h2>
         {error && <div className="alert alert-danger">{error}</div>}
         <form onSubmit={handleLogin}>

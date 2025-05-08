@@ -247,9 +247,6 @@ export default function Layout({ children }) {
     }
   };
 
-
-
-
   const handleComplete = async () => {
     if (!completedSections.includes(currentPath)) {
       try {
@@ -274,16 +271,6 @@ export default function Layout({ children }) {
       }
     }
   };
-
-
-
-
-
-
-
-
-
-
 
   return (
     <>
@@ -481,31 +468,36 @@ export default function Layout({ children }) {
             {children}
 
             {/* bottom prev/next/completed */}
-<div className="d-flex align-items-center mt-4">
-  {/* ← Previous if it exists */}
-  {prevItem && (
-    <Link to={buildLink(prevItem)} className="btn btn-outline-primary">
-      ← {prevItem.label}
-    </Link>
-  )}
+            {!isLoginPage && (
+              <div className="d-flex align-items-center mt-4">
+                {/* ← Previous if it exists */}
+                {prevItem && (
+                  <Link
+                    to={buildLink(prevItem)}
+                    className="btn btn-outline-primary"
+                  >
+                    ← {prevItem.label}
+                  </Link>
+                )}
 
-  {/* Next → or, when nextItem is null, Completed */}
-  {nextItem ? (
-    <button
-      className="btn btn-outline-primary ms-auto"
-      onClick={handleNextClick}
-    >
-      {nextItem.label} →
-    </button>
-  ) : (
-    <button
-      className="btn btn-success ms-auto"
-      onClick={handleComplete}
-    >
-      Completed
-    </button>
-  )}
-</div>
+                {/* Next → or, when nextItem is null, Completed */}
+                {nextItem ? (
+                  <button
+                    className="btn btn-outline-primary ms-auto"
+                    onClick={handleNextClick}
+                  >
+                    {nextItem.label} →
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-success ms-auto"
+                    onClick={handleComplete}
+                  >
+                    Completed
+                  </button>
+                )}
+              </div>
+            )}
           </main>
         </div>
       </div>
