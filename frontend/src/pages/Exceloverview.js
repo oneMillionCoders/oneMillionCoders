@@ -103,7 +103,6 @@ export default function ExcelOverview() {
     📋 Copy Table Values
   </button>
 
-
         <div className="text-center">
           <img
             src="https://www.w3schools.com/excel/overview_ribbon2.jpg"

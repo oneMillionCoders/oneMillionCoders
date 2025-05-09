@@ -18,7 +18,8 @@ app.use(cors()); // Enable CORS
 app.use(express.json()); // Parse JSON request bodies
 
 // Secret key for signing JWTs (store this securely in your .env file)
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'oneMillionCoders';
+
 
 // Middleware to authenticate and authorize admin users
 async function authenticateAdmin(req, res, next) {
@@ -47,6 +48,7 @@ async function authenticateAdmin(req, res, next) {
     res.status(401).json({ message: 'Unauthorized: Invalid token' });
   }
 }
+
 
 // Login endpoint
 app.post('/api/login', async (req, res) => {
@@ -82,6 +84,7 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+
 // User creation endpoint (restricted to admins)
 app.post('/api/users', authenticateAdmin, async (req, res) => {
   const { username, password } = req.body;
@@ -102,10 +105,6 @@ app.post('/api/users', authenticateAdmin, async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
-
-
-
 
 
 // Middleware to authenticate any logged‑in user (not just admin)
@@ -180,14 +179,6 @@ app.post(
     }
   }
 );
-
-
-
-
-
-
-
-
 
 // Start the server
 app.listen(5000, () => {

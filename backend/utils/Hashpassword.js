@@ -2,7 +2,6 @@ require('dotenv').config();
 const bcrypt = require('bcrypt');
 const { Pool } = require('pg'); // PostgreSQL client
 
-
 // Database connection
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -46,3 +45,9 @@ async function addUser(username, plainPassword, isAdmin = false) {
     pool.end();
   }
 }
+
+/*admin user test
+(async () => {
+  await addUser('admin', 'superSecurePassword123!', true); // username, plain-text pw, isAdmin
+  process.exit(0);
+})();*/

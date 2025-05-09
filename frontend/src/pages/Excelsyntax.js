@@ -42,7 +42,6 @@ export default function ExcelSyntax() {
           />
         </div>
 
-
         <p>
           <strong>Note:</strong> The value of a cell is communicated by <strong>reference (value)</strong>, for example <code>A1(2)</code>.
         </p>
@@ -166,9 +165,7 @@ export default function ExcelSyntax() {
             className="img-fluid rounded m-2"
             style={{ maxWidth: '45%', border: '1px solid #ddd', borderRadius: '10px' }}
           />
-        </div>        
-
-
+        </div>     
 
         <p>
           You got the result <code>C2(281)</code>, right? <strong>Way to go!</strong>

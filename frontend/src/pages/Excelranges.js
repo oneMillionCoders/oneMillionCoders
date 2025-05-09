@@ -145,7 +145,6 @@ export default function ExcelRanges() {
           />
         </div>
 
-
         <p>
           <strong>Note:</strong> You can also select the entire spreadsheet by pressing <strong>Ctrl+A</strong> for Windows, or <strong>Cmd+A</strong> for MacOS.
         </p>
@@ -224,19 +223,13 @@ export default function ExcelRanges() {
         </div>
 
         <p>The best way for now is to use the drag and mark method as it is easier and more visual.
-
 <br/>
 <br/>The best way for now is to use the drag and mark method as it is easier and more visual.
 
 </p>
 
-
-
-
-        </section>
+        </section>   
         
-     
-
       <hr className="my-4" />
 
       <section className="mb-5">

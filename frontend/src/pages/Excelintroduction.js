@@ -13,9 +13,7 @@ export default function ExcelIntroduction() {
         Excel is pronounced "Eks - sel"<br/>
         It is a spreadsheet program developed by Microsoft. Excel organizes data in columns and rows and allows you to do mathematical functions. It runs on Windows, macOS, Android and iOS.<br/>
         The first version was released in 1985 and has gone through several changes over the years. However, the main functionality mostly remains the same.
-      </p>
-
-      
+      </p>      
 
       <section className="mb-5">
         <h2 className="h5">Excel is typically used for:</h2>
@@ -47,7 +45,6 @@ export default function ExcelIntroduction() {
           <li>Templates and frameworks can be reused by yourself and others, lowering creation costs</li>
         </ol>
       </section>
-
       <hr className="my-4" />
       <section className="mb-5">
         <h2 className="h5">Get Started</h2>
@@ -56,7 +53,6 @@ export default function ExcelIntroduction() {
         </p>
         
       </section>
-
 
     </div>
   );

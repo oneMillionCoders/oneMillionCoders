@@ -13,7 +13,6 @@ export default function ExcelGetStarted() {
       .catch(err => alert("Failed to copy: " + err));
   };
 
-
   return (
     <div className="p-4">
       <h1 className="h2 mb-3">Excel Get Started</h1>
@@ -48,8 +47,7 @@ export default function ExcelGetStarted() {
             className="img-fluid rounded"
             style={{ maxWidth: '100%', border: '1px solid #ddd', borderRadius: '10px' }}
           />
-          </div>
-        
+          </div>        
 
         <p>
           After entering the Excel application, click on the <strong>New blank workbook</strong> button to get started with a new workbook.<br/>
@@ -62,8 +60,7 @@ export default function ExcelGetStarted() {
             className="img-fluid rounded"
             style={{ maxWidth: '100%', border: '1px solid #ddd', borderRadius: '10px' }}
           />
-          </div>
-        
+          </div>        
 
         <p>
           Enter a name for your workbook, and hit the enter button:
@@ -77,7 +74,6 @@ export default function ExcelGetStarted() {
             style={{ maxWidth: '100%', border: '1px solid #ddd', borderRadius: '10px' }}
           />
           </div>
-
 
         <p>
           The Excel view has columns and rows, similar to a squared math exercise book.
@@ -100,8 +96,7 @@ export default function ExcelGetStarted() {
         <button className="btn btn-outline-secondary mb-3" onClick={handleCopy}>
           📋 Copy Table Values
         </button>
-      </section>
-      
+      </section>      
 
       <hr className="my-4" />
 

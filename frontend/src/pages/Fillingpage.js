@@ -133,12 +133,6 @@ export default function FillingPage() {
            Lets type the value  (<code>1</code>) into the cell <code>A2</code>, which is what we have in <code>A1</code>. Now we have the same values in both <code>A1</code> and <code>A2</code>.</p>
 
 
-
-
-
-
-
-        
         <div className="text-center">
           <img
             src="https://www.w3schools.com/excel/fill_seq2.png"
@@ -150,7 +144,6 @@ export default function FillingPage() {
         <p>
         Let's use the fill function from <code>A1:A10</code> to see what happens. Remember to mark both values before you fill the range.
         </p>
-
         
 <div className="text-center">
           <img

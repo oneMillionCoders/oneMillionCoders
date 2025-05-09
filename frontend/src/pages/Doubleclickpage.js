@@ -68,9 +68,6 @@ export default function DoubleClickFillPage() {
           />
         </div>
 
-
-
-
           <li>Select <code>B2</code></li>
           <li>Type <code>+</code></li>
           <li>Select <code>C2</code></li>
@@ -84,7 +81,6 @@ export default function DoubleClickFillPage() {
           />
         </div>
 
-
           <li>Hit enter</li>
 
           <div className="text-center">
@@ -95,7 +91,6 @@ export default function DoubleClickFillPage() {
             style={{ maxWidth: '100%', border: '1px solid #ddd', borderRadius: '10px' }}
           />
         </div>
-
 
           <li>Double click the fill function</li>
 
@@ -149,7 +144,6 @@ export default function DoubleClickFillPage() {
           />
         </div>
 
-
         <p>
           The fill function is just loading without filling the rows. It is not understanding the pattern.
         </p>
@@ -167,7 +161,6 @@ export default function DoubleClickFillPage() {
             style={{ maxWidth: '100%', border: '1px solid #ddd', borderRadius: '10px' }}
           />
         </div>
-
 
         <p><strong>Loading... Still nothing...</strong></p>
         <p>
