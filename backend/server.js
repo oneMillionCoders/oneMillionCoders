@@ -180,10 +180,11 @@ app.post(
 
 // Serve static files from the React app
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  // 1) mount the build folder at the root path "/"
+  app.use('/', express.static(path.join(__dirname, '../frontend/build')));
 
-  // Handle React routing, return all requests to React's index.html
-  app.get('*', (req, res) => {
+  // 2) catch-all for client-side routes—must be "/*" not "*"
+  app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
   });
 }
