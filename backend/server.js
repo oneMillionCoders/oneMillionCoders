@@ -12,7 +12,7 @@ const pool = new Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
-app.use(cors({ origin: process.env.FRONTEND_URL })); // Enable CORS
+app.use(cors());  // Enable CORS
 app.use(express.json()); // Parse JSON request bodies
 
 // Secret key for signing JWTs (store this securely in your .env file)
