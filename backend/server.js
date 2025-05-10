@@ -18,6 +18,20 @@ app.use(express.json()); // Parse JSON request bodies
 // Secret key for signing JWTs (store this securely in your .env file)
 const JWT_SECRET = process.env.JWT_SECRET || 'oneMillionCoders';
 
+// Middleware to authenticate users
+async function authenticateUser(req, res, next) {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'No token provided' });
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.userId = decoded.userId;
+    next();
+  } catch (err) {
+    console.error('Auth error:', err);
+    res.status(401).json({ message: 'Invalid token' });
+  }
+}
 
 // Middleware to authenticate and authorize admin users
 async function authenticateAdmin(req, res, next) {
@@ -46,7 +60,6 @@ async function authenticateAdmin(req, res, next) {
     res.status(401).json({ message: 'Unauthorized: Invalid token' });
   }
 }
-
 
 // Login endpoint
 app.post('/api/login', async (req, res) => {
@@ -82,7 +95,6 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-
 // User creation endpoint (restricted to admins)
 app.post('/api/users', authenticateAdmin, async (req, res) => {
   const { username, password } = req.body;
@@ -104,91 +116,64 @@ app.post('/api/users', authenticateAdmin, async (req, res) => {
   }
 });
 
+// API routes
+app.get('/api/completed-sections', authenticateUser, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT completed_sections FROM users WHERE id = $1',
+      [req.userId]
+    );
+    if (!result.rows.length) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ completed_sections: result.rows[0].completed_sections });
+  } catch (err) {
+    console.error('Error fetching completed sections:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
-// Middleware to authenticate any logged‑in user (not just admin)
-async function authenticateUser(req, res, next) {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'No token provided' });
+app.post('/api/complete-section', authenticateUser, async (req, res) => {
+  const { section } = req.body;
+  if (typeof section !== 'string') {
+    return res.status(400).json({ message: 'Section must be a string' });
+  }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.userId = decoded.userId;
-    next();
+    const update = await pool.query(
+      `UPDATE users
+       SET completed_sections = 
+         CASE
+           WHEN NOT (completed_sections @> to_jsonb($2::text) :: jsonb) 
+           THEN completed_sections || to_jsonb($2::text) :: jsonb
+           ELSE completed_sections
+         END
+       WHERE id = $1
+       RETURNING completed_sections`,
+      [req.userId, section]
+    );
+
+    if (!update.rows.length) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ completed_sections: update.rows[0].completed_sections });
   } catch (err) {
-    console.error('Auth error:', err);
-    res.status(401).json({ message: 'Invalid token' });
+    console.error('Error updating completed section:', err);
+    res.status(500).json({ message: 'Internal server error' });
   }
-}
-
-// GET completed‑sections
-app.get(
-  '/api/completed-sections',
-  authenticateUser,
-  async (req, res) => {
-    try {
-      const result = await pool.query(
-        'SELECT completed_sections FROM users WHERE id = $1',
-        [req.userId]
-      );
-      if (!result.rows.length) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      res.json({ completed_sections: result.rows[0].completed_sections });
-    } catch (err) {
-      console.error('Error fetching completed sections:', err);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  }
-);
-
-// POST complete‑section
-app.post(
-  '/api/complete-section',
-  authenticateUser,
-  async (req, res) => {
-    const { section } = req.body;
-    if (typeof section !== 'string') {
-      return res.status(400).json({ message: 'Section must be a string' });
-    }
-
-    try {
-      // Append the section if it’s not already present
-      const update = await pool.query(
-        `UPDATE users
-         SET completed_sections = 
-           CASE
-             WHEN NOT (completed_sections @> to_jsonb($2::text) :: jsonb) 
-             THEN completed_sections || to_jsonb($2::text) :: jsonb
-             ELSE completed_sections
-           END
-         WHERE id = $1
-         RETURNING completed_sections`,
-        [req.userId, section]
-      );
-
-      if (!update.rows.length) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      res.json({ completed_sections: update.rows[0].completed_sections });
-    } catch (err) {
-      console.error('Error updating completed section:', err);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  }
-);
+});
 
 // Serve static files from the React app
 if (process.env.NODE_ENV === 'production') {
   // 1) mount the build folder at the root path "/"
   app.use('/', express.static(path.join(__dirname, '../frontend/build')));
-
-  // 2) catch-all for client-side routes—must be "/*" not "*"
-  app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
-  });
 }
 
+// Serve React app (wildcard route)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+});
 
 // Start the server
 const PORT = process.env.PORT || 5000;
