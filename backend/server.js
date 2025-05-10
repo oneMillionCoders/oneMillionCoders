@@ -164,16 +164,15 @@ app.post('/api/complete-section', authenticateUser, async (req, res) => {
   }
 });
 
-// Serve static files from the React app
-if (process.env.NODE_ENV === 'production') {
-  // 1) mount the build folder at the root path "/"
-  app.use('/', express.static(path.join(__dirname, '../frontend/build')));
-}
+// Serve static files from the frontend
+const buildPath = path.join(__dirname, '../frontend/build');
+app.use(express.static(buildPath));
 
-// Serve React app (wildcard route)
+// Wildcard route to serve React app
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+  res.sendFile(path.join(buildPath, 'index.html'));
 });
+
 
 // Start the server
 const PORT = process.env.PORT || 5000;
