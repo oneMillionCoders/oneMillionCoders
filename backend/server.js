@@ -4,17 +4,15 @@ const bcrypt = require('bcrypt'); // For password hashing
 const { Pool } = require('pg'); // PostgreSQL client
 const cors = require('cors'); // To allow requests from the frontend
 const jwt = require('jsonwebtoken'); // For token-based authentication
+const path = require('path');
 
 const app = express();
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
-app.use(cors()); // Enable CORS
+app.use(cors({ origin: process.env.FRONTEND_URL })); // Enable CORS
 app.use(express.json()); // Parse JSON request bodies
 
 // Secret key for signing JWTs (store this securely in your .env file)
@@ -180,7 +178,18 @@ app.post(
   }
 );
 
+// Serve static files from the React app
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+  // Handle React routing, return all requests to React's index.html
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+  });
+}
+
 // Start the server
-app.listen(5000, () => {
-  console.log('✅ Server is running on http://localhost:5000');
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`✅ Server is running on http://localhost:${PORT}`);
 });

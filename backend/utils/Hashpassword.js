@@ -24,7 +24,7 @@ async function addUser(username, plainPassword, isAdmin = false) {
     // Check if the username already exists
     const userCheck = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
     if (userCheck.rows.length > 0) {
-      console.log(`User with username "${username}" already exists.`);
+     // console.log(`User with username "${username}" already exists.`);
       return;
     }
 
@@ -37,7 +37,7 @@ async function addUser(username, plainPassword, isAdmin = false) {
       [username, hashedPassword, isAdmin]
     );
 
-    console.log(`User added with ID: ${result.rows[0].id}`);
+    //console.log(`User added with ID: ${result.rows[0].id}`);
   } catch (error) {
     console.error('Error adding user:', error);
   } finally {

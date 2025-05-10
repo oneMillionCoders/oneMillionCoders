@@ -73,14 +73,14 @@ export default function Layout({ children }) {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          "http://localhost:5000/api/completed-sections",
+          `${process.env.REACT_APP_BACKEND_URL}/api/completed-sections`, // Updated URL
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
         if (response.ok) {
           const data = await response.json();
-          console.log("Fetched completed sections:", data.completed_sections); // Debug log
+          //console.log("Fetched completed sections:", data.completed_sections); // Debug log
           setCompletedSections(data.completed_sections);
         } else {
           console.error("Failed to fetch completed sections");
@@ -215,7 +215,7 @@ export default function Layout({ children }) {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          "http://localhost:5000/api/complete-section",
+          `${process.env.REACT_APP_BACKEND_URL}/api/complete-section`, // Updated URL
           {
             method: "POST",
             headers: {
@@ -228,10 +228,9 @@ export default function Layout({ children }) {
 
         if (response.ok) {
           const data = await response.json();
-          console.log(
-            "Updated completed sections from backend:",
+          /*console.log("Updated completed sections from backend:",
             data.completed_sections
-          );
+          );*/
           setCompletedSections(data.completed_sections);
         } else {
           console.error("Failed to update completed section.");
@@ -252,7 +251,7 @@ export default function Layout({ children }) {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          "http://localhost:5000/api/complete-section",
+          `${process.env.REACT_APP_BACKEND_URL}/api/complete-section`, // Use environment variable
           {
             method: "POST",
             headers: {
