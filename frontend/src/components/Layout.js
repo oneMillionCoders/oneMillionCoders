@@ -1,7 +1,8 @@
 // src/components/Layout.js
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import "../App.css";
+import { ThemeContext } from "../ThemeContext";
 
 const careers = [
   {
@@ -66,6 +67,7 @@ export default function Layout({ children }) {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [completedSections, setCompletedSections] = useState([]);
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   // Fetch completed sections from the backend on app load
   useEffect(() => {
@@ -297,9 +299,19 @@ export default function Layout({ children }) {
                 </li>
               ))}
             </ul>
-            <button className="btn btn-danger ms-auto" onClick={handleLogout}>
-              Logout
-            </button>
+            <div className="d-flex ms-auto align-items-center">
+              <button
+                onClick={toggleTheme}
+                className="btn btn-secondary ms-3"
+                aria-label="Toggle dark/light mode"
+                style={{ minWidth: 160 }}
+              >
+                Switch to {theme === "light" ? "Dark" : "Light"} Mode
+              </button>
+              <button className="btn btn-danger ms-3" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
           </>
         )}
       </nav>
@@ -307,14 +319,15 @@ export default function Layout({ children }) {
       {/* sub‑navbar */}
       {(inDAA || inCSP || inNST) && (
         <nav
-          className="navbar navbar-light bg-light px-4"
+          className="navbar career-path-row px-4"
           style={{
             position: "fixed",
             top: H1,
             height: H2,
             width: "100%",
             zIndex: 1030,
-            borderBottom: "1px solid #ddd",
+            borderBottom: "1px solid #444"
+            // Remove background and color inline, let CSS handle it
           }}
         >
           <ul className="navbar-nav flex-row">
@@ -345,13 +358,16 @@ export default function Layout({ children }) {
           {/* sidebar */}
           {(inDAA || inCSP || inNST) && (
             <aside
-              className="d-none d-md-block bg-light border-end p-3"
+              className="d-none d-md-block border-end p-3"
               style={{
                 position: "fixed",
                 top: H1 + H2,
                 bottom: 0,
                 width: "15%",
                 overflowY: "auto",
+                background: "var(--card-bg)",
+                color: "var(--card-text)",
+                transition: "background 0.3s, color 0.3s"
               }}
             >
               <ul className="nav nav-pills flex-column position-relative">
@@ -438,7 +454,12 @@ export default function Layout({ children }) {
                 ? "col-md-10 offset-md-2 p-4"
                 : "col-12 p-4"
             }
-            style={{ minHeight: "100vh" }}
+            style={{
+              minHeight: "100vh",
+              background: "var(--card-bg)",
+              color: "var(--card-text)",
+              transition: "background 0.3s, color 0.3s"
+            }}
           >
             {/* top prev/next */}
             <div className="d-flex justify-content-between mb-4">
@@ -500,6 +521,8 @@ export default function Layout({ children }) {
           </main>
         </div>
       </div>
+
+
     </>
   );
 }

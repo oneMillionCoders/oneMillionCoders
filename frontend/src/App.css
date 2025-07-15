@@ -1,6 +1,42 @@
+/* Ensure top row nav links are visible in both light and dark mode */
+
+/* Make career path nav links white in light mode, and use navbar-text in dark mode */
+
+/* FORCE career path nav links to be white in all modes, selected or not, using high specificity */
+.career-path-row .navbar-nav .nav-link,
+.career-path-row .navbar-nav .nav-link.active-link {
+  color: #fff !important;
+  transition: color 0.3s;
+}
+/* Sub-navbar (career path row) background fix for light/dark mode */
+.navbar.career-path-row {
+  background: var(--navbar-bg, #282c34) !important;
+  color: var(--navbar-text, #fff) !important;
+  transition: background 0.3s, color 0.3s;
+}
+/* Ensure main content containers use theme variables for background and text */
+.container,
+.container-fluid,
+.row,
+.col,
+main {
+  background: var(--card-bg, #fff) !important;
+  color: var(--card-text, #222) !important;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Fix for card backgrounds in dark mode */
+.card {
+  background: var(--card-bg, #fff) !important;
+  color: var(--card-text, #222) !important;
+  box-shadow: var(--card-shadow, 0 2px 8px rgba(0,0,0,0.04));
+}
 /* ── your existing resets & App styles ───────────────────────────────────── */
+
 .App {
   text-align: center;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .App-logo {
@@ -15,14 +51,14 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: var(--navbar-bg, #282c34);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: var(--navbar-text, #fff);
 }
 
 .App-link {
@@ -35,24 +71,57 @@
 }
 
 /* ── Navbar active‐link highlighting ───────────────────────────────────────── */
+
+
 .active-link {
-  background-color: #007bff;
-  color: white !important;
+  background-color: var(--primary, #007bff);
+  color: var(--primary-text, #fff) !important;
   font-weight: bold;
   border-radius: 5px;
   padding: 10px 15px;
   display: block;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
-.navbar-nav .nav-link.active-link {
-  background-color: #007bff;
+.nav-link {
+  color: var(--text, #222) !important;
+  background: transparent;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Only force top navbar (main nav) links to be white */
+.navbar.fixed-top .navbar-nav .nav-link {
   color: #fff !important;
+}
+.nav-link:hover, .nav-link:focus {
+  background: var(--primary, #007bff);
+  color: var(--primary-text, #fff) !important;
+}
+
+/* ── Sidebar and top nav active link highlight */
+.nav-link.active-link, .active-link {
+  background-color: var(--primary, #007bff) !important;
+  color: var(--primary-text, #fff) !important;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 10px 15px;
+  display: block;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+/* Remove duplicate .navbar-nav .nav-link.active-link to avoid conflicts */
+
+
+.navbar-nav .nav-link.active-link {
+  background-color: var(--primary, #007bff);
+  color: var(--primary-text, #fff) !important;
   padding: 6px 10px;
   border-radius: 4px;
   margin: 0;
   display: inline-block;
   text-align: center;
 }
+
 
 .navbar-light .navbar-nav {
   margin-top: -4px;
@@ -102,14 +171,33 @@
 
 /* ── General page look ─────────────────────────────────────────────────────── */
 body {
-  background-color: #f8f9fa;
+  background: var(--bg);
+  color: var(--text);
 }
 .card {
   border-radius: 10px;
+  background: var(--card-bg, #fff);
+  color: var(--card-text, #222);
+  box-shadow: var(--card-shadow, 0 2px 8px rgba(0,0,0,0.04));
 }
 .btn-primary {
-  background-color: #007bff;
+  background-color: var(--primary, #007bff);
+  color: var(--primary-text, #fff);
   border: none;
+}
+.btn-secondary {
+  background-color: var(--secondary, #6c757d);
+  color: var(--secondary-text, #fff);
+  border: none;
+}
+.btn-outline-primary {
+  color: var(--primary, #007bff);
+  border-color: var(--primary, #007bff);
+}
+.btn-outline-primary:hover {
+  color: var(--primary-text, #fff);
+  background-color: var(--primary, #007bff);
+  border-color: var(--primary, #007bff);
 }
 
 /* ── Sidebar items with checkmarks ────────────────────────────────────────── */
@@ -133,21 +221,23 @@ body {
 }
 
 /* the circle */
+
 .checkmark {
   width: 18px;
   height: 18px;
-  border: 2px solid #ccc;
+  border: 2px solid var(--checkmark-border, #ccc);
   border-radius: 50%;
-  background-color: #fff;
+  background-color: var(--checkmark-bg, #fff);
   position: relative;
   flex-shrink: 0;
   transition: border-color 0.3s, background-color 0.3s;
 }
 
 /* the check inside when “alive” */
+
 .checkmark.alive {
-  border-color: #007bff;
-  background-color: #007bff;
+  border-color: var(--primary, #007bff);
+  background-color: var(--primary, #007bff);
 }
 .checkmark.alive::after {
   content: '✔';
@@ -156,22 +246,23 @@ body {
   left: 50%;
   transform: translate(-50%, -55%);
   font-size: 12px;
-  color: #fff;
+  color: var(--primary-text, #fff);
 }
 
 /* the vertical line stretching down */
+
 .vertical-line {
   position: absolute;
-  top: 18px;      /* start just below the circle */
-  bottom: -15px;  /* extend into the next container by same offset */
+  top: 18px;
+  bottom: -15px;
   left: 50%;
   transform: translateX(-50%);
   width: 2px;
-  background-color: #ccc;
+  background-color: var(--checkmark-border, #ccc);
   transition: background-color 0.3s;
 }
 .checkmark.alive + .vertical-line {
-  background-color: #007bff;
+  background-color: var(--primary, #007bff);
 }
 
 /* ── navigation buttons at bottom ─────────────────────────────────────────── */
@@ -187,12 +278,5 @@ body {
 .mt-4 {
   margin-top: 1.5rem !important;
 }
-.btn-outline-primary {
-  color: #007bff;
-  border-color: #007bff;
-}
-.btn-outline-primary:hover {
-  color: #fff;
-  background-color: #007bff;
-  border-color: #007bff;
-}
+
+/* All other elements should inherit colors from variables above */
