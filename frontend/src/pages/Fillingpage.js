@@ -1,11 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function FillingPage() {
+  const [quizAnswer, setQuizAnswer] = useState('');
+  const [quizFeedback, setQuizFeedback] = useState('');
+  const [showAnswer, setShowAnswer] = useState(false);
+  const correctAnswer = '3';
+
+  const handleQuizSubmit = (e) => {
+    e.preventDefault();
+    if (quizAnswer.trim() === correctAnswer) {
+      setQuizFeedback('CORRECT');
+    } else {
+      setQuizFeedback('WRONG');
+    }
+  };
+  const handleQuizChange = (e) => {
+    setQuizAnswer(e.target.value);
+    setQuizFeedback('');
+  };
   return (
     <div className="p-4">
       <h1 className="h2 mb-3">Excel Fill</h1>
 
       <hr className="my-4" />
+
+      {/* --- Quiz Card --- */}
+      {/* Quiz card moved to bottom, just before closing main div */}
 
       <section className="mb-5">
         <h2 className="h5">Filling</h2>
@@ -287,6 +307,45 @@ export default function FillingPage() {
           It recognised the pattern of the numbers and continued it for us. Words and numbers can be combined, as long as you use a recognizable pattern for the numbers.
         </p>
       </section>
+      <div className="card mb-4" style={{ maxWidth: 500, margin: '0 auto' }}>
+        <div className="card-body">
+          <h5 className="card-title">Test Yourself With Exercises</h5>
+          <p className="card-text">Complete the sequence of numbers:</p>
+          <div className="mb-2">
+            <div>A1(1)</div>
+            <div>A2(2)</div>
+            <div>A3(<strong>?</strong>)</div>
+          </div>
+          <form onSubmit={handleQuizSubmit} className="d-flex align-items-center mb-2">
+            <input
+              type="text"
+              className="form-control me-2"
+              placeholder="Type your answer"
+              value={quizAnswer}
+              onChange={handleQuizChange}
+              autoComplete="off"
+            />
+            <button type="submit" className="btn btn-primary me-2">Submit</button>
+            <button
+              type="button"
+              className="btn btn-outline-info"
+              onClick={() => setShowAnswer((prev) => !prev)}
+            >
+              {showAnswer ? 'Hide Answer' : 'Show Answer'}
+            </button>
+          </form>
+          {quizFeedback && (
+            <div className={`mt-3 fw-bold ${quizFeedback === 'CORRECT' ? 'text-success' : 'text-danger'}`}>
+              {quizFeedback}
+            </div>
+          )}
+          {showAnswer && (
+            <div className="mt-2 alert alert-info py-2 px-3">
+              <strong>Answer:</strong> {correctAnswer}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

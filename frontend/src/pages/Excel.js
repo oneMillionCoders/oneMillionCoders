@@ -1,5 +1,5 @@
 // src/pages/Excel.js
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function Excel() {
   const sampleData = [
@@ -9,11 +9,30 @@ export default function Excel() {
     [314, 44]
   ];
 
+  const [quizAnswer, setQuizAnswer] = useState('');
+  const [quizFeedback, setQuizFeedback] = useState('');
+  const correctAnswer = '=A1+B1';
+  const [showAnswer, setShowAnswer] = useState(false);
+
   const handleCopy = () => {
     const text = sampleData.map(row => row.join('\t')).join('\n');
     navigator.clipboard.writeText(text)
       .then(() => alert("Values copied! Paste directly into Excel."))
       .catch(err => alert("Failed to copy: " + err));
+  };
+
+  const handleQuizSubmit = (e) => {
+    e.preventDefault();
+    if (quizAnswer.trim().toUpperCase() === correctAnswer.toUpperCase()) {
+      setQuizFeedback('CORRECT');
+    } else {
+      setQuizFeedback('WRONG');
+    }
+  };
+
+  const handleQuizChange = (e) => {
+    setQuizAnswer(e.target.value);
+    setQuizFeedback('');
   };
 
   return (
@@ -65,6 +84,42 @@ export default function Excel() {
           <li>Finance and accounting</li>
         </ol>
       </section>
+
+      {/* --- Quiz Card --- */}
+      <div className="card mb-4" style={{ maxWidth: 500, margin: '0 auto' }}>
+        <div className="card-body">
+          <h5 className="card-title">Test Yourself</h5>
+          <p className="card-text">What is the formula to add the values in cells A1 and B1 in Excel?</p>
+          <form onSubmit={handleQuizSubmit} className="d-flex align-items-center mb-2">
+            <input
+              type="text"
+              className="form-control me-2"
+              placeholder="Type your answer"
+              value={quizAnswer}
+              onChange={handleQuizChange}
+              autoComplete="off"
+            />
+            <button type="submit" className="btn btn-primary me-2">Submit</button>
+            <button
+              type="button"
+              className="btn btn-outline-info"
+              onClick={() => setShowAnswer((prev) => !prev)}
+            >
+              {showAnswer ? 'Hide Answer' : 'Show Answer'}
+            </button>
+          </form>
+          {quizFeedback && (
+            <div className={`mt-3 fw-bold ${quizFeedback === 'CORRECT' ? 'text-success' : 'text-danger'}`}>
+              {quizFeedback}
+            </div>
+          )}
+          {showAnswer && (
+            <div className="mt-2 alert alert-info py-2 px-3">
+              <strong>Answer:</strong> {correctAnswer}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
