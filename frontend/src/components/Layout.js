@@ -349,23 +349,6 @@ export default function Layout({ children }) {
         </Link>
         {!isLoginPage && isLoggedIn && (
           <>
-            <button
-              className="navbar-toggler"
-              type="button"
-              onClick={() => setMobileNavOpen(!mobileNavOpen)}
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            {/* Mobile logout next to burger */}
-            <button
-              type="button"
-              className="btn btn-outline-danger btn-sm d-lg-none ms-2"
-              onClick={handleLogout}
-              aria-label="Logout"
-            >
-              Logout
-            </button>
             {/* Desktop careers list */}
             <ul className="navbar-nav ms-3 d-none d-lg-flex">
               {careers.map((c) => (
@@ -382,17 +365,34 @@ export default function Layout({ children }) {
               ))}
             </ul>
 
-            <div className="d-flex flex-column flex-lg-row align-items-center gap-2 ms-auto">
+            <div className="d-flex flex-row align-items-center gap-2 ms-auto">
+                {/* Mobile: burger and logout on the right */}
                 <button
-                onClick={toggleTheme}
-                  className="btn btn-secondary"
+                  className="navbar-toggler d-lg-none"
+                  type="button"
+                  onClick={() => setMobileNavOpen(!mobileNavOpen)}
+                  aria-label="Toggle navigation"
+                >
+                  <span className="navbar-toggler-icon"></span>
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger d-lg-none"
+                  onClick={handleLogout}
+                  aria-label="Logout"
+                >
+                  Logout
+                </button>
+                {/* Desktop: theme toggle and logout */}
+                <button
+                  onClick={toggleTheme}
+                  className="btn btn-secondary d-none d-lg-inline-flex"
                   aria-label="Toggle dark/light mode"
                   style={{ minWidth: 160 }}
                 >
                   Switch to {theme === "light" ? "Dark" : "Light"} Mode
                 </button>
-              {/* Show Logout on the right only on lg+ to avoid duplicate with mobile-left logout */}
-              <button className="btn btn-danger d-none d-lg-inline-flex" onClick={handleLogout}>
+                <button className="btn btn-danger d-none d-lg-inline-flex" onClick={handleLogout}>
                   Logout
                 </button>
               </div>
@@ -450,53 +450,6 @@ export default function Layout({ children }) {
                 </NavLink>
               ))}
             </div>
-
-            {(inDAA || inCSP || inNST) && (
-              <>
-                <hr className="my-4" style={{ borderColor: 'rgba(255,255,255,0.15)' }} />
-                <h6 className="mb-2" style={{ color: 'var(--navbar-text, #fff)' }}>Course contents</h6>
-                <div className="list-group mb-3">
-                  {sidebarItems.map((item) => {
-                    const hasChildren = Array.isArray(item.children);
-                    if (hasChildren) {
-                      return (
-                        <div key={item.to} className="mb-2">
-                          <div className="list-group-item" style={{ background: 'transparent', color: 'var(--navbar-text, #fff)', borderColor: 'rgba(255,255,255,0.15)' }}>
-                            <strong>{item.label}</strong>
-                          </div>
-                          {item.children.map((ch) => (
-                            <NavLink
-                              key={ch.to}
-                              to={buildLink(ch)}
-                              onClick={() => setMobileNavOpen(false)}
-                              className={({ isActive }) =>
-                                "list-group-item list-group-item-action" + (isActive ? " active" : "")
-                              }
-                              style={{ background: 'transparent', color: 'var(--navbar-text, #fff)', borderColor: 'rgba(255,255,255,0.15)' }}
-                            >
-                              {ch.label}
-                            </NavLink>
-                          ))}
-                        </div>
-                      );
-                    }
-                    return (
-                      <NavLink
-                        key={item.to}
-                        to={buildLink(item)}
-                        onClick={() => setMobileNavOpen(false)}
-                        className={({ isActive }) =>
-                          "list-group-item list-group-item-action" + (isActive ? " active" : "")
-                        }
-                        style={{ background: 'transparent', color: 'var(--navbar-text, #fff)', borderColor: 'rgba(255,255,255,0.15)' }}
-                      >
-                        {item.label}
-                      </NavLink>
-                    );
-                  })}
-                </div>
-              </>
-            )}
           </div>
         </div>
       )}
