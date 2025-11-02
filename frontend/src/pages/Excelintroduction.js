@@ -8,12 +8,14 @@ export default function ExcelIntroduction() {
 
       <hr className="my-4" />
 
-      <p>
-        <h2>What is Excel?</h2>
-        Excel is pronounced "Eks - sel"<br/>
-        It is a spreadsheet program developed by Microsoft. Excel organizes data in columns and rows and allows you to do mathematical functions. It runs on Windows, macOS, Android and iOS.<br/>
-        The first version was released in 1985 and has gone through several changes over the years. However, the main functionality mostly remains the same.
-      </p>      
+      <section className="mb-5">
+        <h2 className="h5">What is Excel?</h2>
+        <p>
+          Excel is pronounced "Eks - sel"<br/>
+          It is a spreadsheet program developed by Microsoft. Excel organizes data in columns and rows and allows you to do mathematical functions. It runs on Windows, macOS, Android and iOS.<br/>
+          The first version was released in 1985 and has gone through several changes over the years. However, the main functionality mostly remains the same.
+        </p>
+      </section>      
 
       <section className="mb-5">
         <h2 className="h5">Excel is typically used for:</h2>

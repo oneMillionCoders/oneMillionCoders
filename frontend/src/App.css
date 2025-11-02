@@ -395,6 +395,13 @@ body {
     margin-bottom: 0.25rem;
   }
 
+  /* Ensure sub-navbar items align center and do not introduce extra vertical spacing */
+  .career-path-row .nav-item {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 0 !important;
+  }
+
   /* Make top navbar career items wrap and display better */
   .navbar.fixed-top .navbar-nav {
     gap: 0.5rem;
@@ -424,6 +431,17 @@ body {
   .btn-success,
   .btn-danger {
     font-size: 0.9rem;
+  }
+
+  /* Ensure bottom prev/next buttons match size on mobile */
+  @media (max-width: 767px) {
+    .bottom-controls .btn {
+      width: 100% !important;
+    }
+    /* remove ms-auto push on mobile so the next button sits full width under the prev */
+    .bottom-controls .btn.ms-auto {
+      margin-left: 0 !important;
+    }
   }
 
   /* Improve table responsiveness */
@@ -670,6 +688,11 @@ body {
   .career-path-row .nav-link {
     font-size: 0.75rem;
     padding: 6px 10px;
+  }
+
+  /* Make bottom nav buttons equal width on very small screens */
+  .bottom-nav .btn {
+    width: 100% !important;
   }
 }
 

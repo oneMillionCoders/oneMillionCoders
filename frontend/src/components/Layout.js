@@ -457,7 +457,7 @@ export default function Layout({ children }) {
       {/* sub‑navbar */}
       {(inDAA || inCSP || inNST) && (
         <nav
-          className="navbar career-path-row px-3 px-md-4"
+          className="navbar career-path-row px-3 px-md-4 d-flex align-items-center"
           style={{
             position: "fixed",
             top: H1,
@@ -466,14 +466,15 @@ export default function Layout({ children }) {
             width: "100%",
             zIndex: 1030,
             borderBottom: "1px solid #444",
-            flexWrap: 'wrap'
+            flexWrap: 'nowrap'
           }}
         >
           {/* Inline opener for course contents on mobile, appears before Excel/SQL list */}
           <button
             className="btn btn-sm d-md-none me-2"
-            onClick={() => setMobileSidebarOpen(true)}
-            aria-label="Open course contents"
+            onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+            aria-label="Toggle course contents"
+            aria-expanded={mobileSidebarOpen}
             style={{
               background: 'transparent',
               border: '1px solid rgba(255,255,255,0.3)',
@@ -485,14 +486,14 @@ export default function Layout({ children }) {
             ☰
           </button>
 
-          <ul className="navbar-nav flex-row flex-wrap">
+          <ul className="navbar-nav flex-row flex-nowrap overflow-auto mb-0 flex-grow-1 align-items-center">
             {(inDAA
               ? careerPaths.daa
               : inCSP
               ? careerPaths.csp
               : careerPaths.nst
             ).map((p) => (
-              <li key={p.to} className="nav-item me-2 me-md-3 mb-1">
+              <li key={p.to} className="nav-item me-2 me-md-3 mb-0">
                 <NavLink
                   to={buildLink(p)}
                   className={({ isActive }) =>
@@ -640,7 +641,8 @@ export default function Layout({ children }) {
 
             {/* bottom prev/next/completed */}
             {!isLoginPage && (
-              <div className="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 mt-4">
+              <div className="bottom-controls d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 mt-4">
+                <div className="bottom-nav">
                 {/* ← Previous if it exists */}
                 {prevItem && (
                   <Link
@@ -654,19 +656,20 @@ export default function Layout({ children }) {
                 {/* Next → or, when nextItem is null, Completed */}
                 {nextItem ? (
                   <button
-                    className="btn btn-outline-primary ms-auto"
+                      className="btn btn-outline-primary btn-next ms-sm-auto"
                     onClick={handleNextClick}
                   >
                     {nextItem.label} →
                   </button>
                 ) : (
                   <button
-                    className="btn btn-success ms-auto"
+                      className="btn btn-success btn-next ms-sm-auto"
                     onClick={handleComplete}
                   >
                     Completed
                   </button>
                 )}
+                </div>
               </div>
             )}
           </main>

@@ -86,23 +86,23 @@ export default function Excel() {
       </section>
 
       {/* --- Quiz Card --- */}
-      <div className="card mb-4" style={{ maxWidth: 500, margin: '0 auto' }}>
+      <div className="card mb-4" style={{ maxWidth: 500, margin: '0 auto', width: '100%' }}>
         <div className="card-body">
           <h5 className="card-title">Test Yourself</h5>
           <p className="card-text">What is the formula to add the values in cells A1 and B1 in Excel?</p>
-          <form onSubmit={handleQuizSubmit} className="d-flex align-items-center mb-2">
+          <form onSubmit={handleQuizSubmit} className="d-flex flex-column flex-sm-row align-items-center mb-2">
             <input
               type="text"
-              className="form-control me-2"
+              className="form-control flex-grow-1 mb-2 mb-sm-0 me-sm-2"
               placeholder="Type your answer"
               value={quizAnswer}
               onChange={handleQuizChange}
               autoComplete="off"
             />
-            <button type="submit" className="btn btn-primary me-2">Submit</button>
+            <button type="submit" className="btn btn-primary w-100 w-sm-auto mb-2 mb-sm-0 me-sm-2">Submit</button>
             <button
               type="button"
-              className="btn btn-outline-info"
+              className="btn btn-outline-info w-100 w-sm-auto"
               onClick={() => setShowAnswer((prev) => !prev)}
             >
               {showAnswer ? 'Hide Answer' : 'Show Answer'}

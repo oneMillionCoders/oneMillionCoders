@@ -111,9 +111,7 @@ export default function ExcelOverview() {
             style={{ maxWidth: '100%', border: '1px solid #ddd', borderRadius: '10px' }}
           />
         </div>
-        <p><h5>Each cell has its unique reference, which is its coordinates, where the columns and rows intersect.</h5>
-          
-        </p>
+  <h5>Each cell has its unique reference, which is its coordinates, where the columns and rows intersect.</h5>
         <p>
           For example, 1 was typed in cell A1. The reference can be found by clicking on the relevant cell and seeing the reference in the Name Box to the left, which tells you that the cell's reference is A1.
         </p>
