@@ -1,18 +1,12 @@
 require('dotenv').config();
 const bcrypt = require('bcrypt');
-const { Pool } = require('pg'); // PostgreSQL client
+const pool = require('./db'); // PostgreSQL client
 
-// Use DATABASE_URL (Neon) if present; fallback to individual env vars
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || undefined,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-  // If you prefer separate vars for local dev, pg will still read them from env
-});
+const SALT_ROUNDS = parseInt(process.env.BCRYPT_ROUNDS || '12', 10);
 
 // Function to hash a password
 async function hashPassword(plainPassword) {
-  const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
+  const hashedPassword = await bcrypt.hash(plainPassword, SALT_ROUNDS);
   return hashedPassword;
 }
 
@@ -45,18 +39,50 @@ async function addUser(username, plainPassword, isAdmin = false) {
 // Export functions so other modules or a CLI can use them
 module.exports = { addUser, hashPassword };
 
-// If run directly, create a user and then close the pool
+// If run directly, prompt securely for password (avoid shell history)
 if (require.main === module) {
   (async () => {
+    const rl = require('readline');
+    const r = rl.createInterface({ input: process.stdin, output: process.stdout, terminal: true });
+
+    const question = (q, hide = false) => new Promise(resolve => {
+      if (!hide) return r.question(q, ans => resolve(ans));
+      // hide input
+      process.stdout.write(q);
+      const stdin = process.openStdin();
+      const onData = (char) => {
+        char = char + '';
+        switch (char) {
+          case '\n':
+          case '\r':
+          case '\u0004':
+            stdin.removeListener('data', onData);
+            break;
+          default:
+            process.stdout.clearLine(0);
+            process.stdout.cursorTo(0);
+            process.stdout.write(q + Array(r.line.length + 1).join('*'));
+            break;
+        }
+      };
+      stdin.on('data', onData);
+      r.question('', answer => {
+        process.stdout.write('\n');
+        resolve(answer);
+      });
+    });
+
     try {
-      const username = process.argv[2] || 'admin';
-      const password = process.argv[3] || 'superSecurePassword123!';
-      const isAdmin = (process.argv[4] || 'true') === 'true';
+      const username = process.argv[2] || await question('Username: ');
+      const password = process.argv[3] || await question('Password (will be hidden): ', true);
+      const isAdmin = (process.argv[4] || await question('Is admin? (true/false): ')) === 'true';
       const id = await addUser(username, password, isAdmin);
       console.log(`User created with id: ${id}`);
     } catch (err) {
       console.error(err);
+      process.exitCode = 1;
     } finally {
+      // close shared pool only for CLI runs
       await pool.end();
       process.exit(0);
     }

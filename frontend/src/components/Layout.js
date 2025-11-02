@@ -658,7 +658,7 @@ export default function Layout({ children }) {
             {/* bottom prev/next/completed */}
             {!isLoginPage && (
               <div className="bottom-controls d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 mt-4">
-                <div className="bottom-nav">
+                <div className="bottom-nav d-flex flex-column flex-sm-row w-100 align-items-stretch align-items-sm-center justify-content-between">
                 {/* ← Previous if it exists */}
                 {prevItem && (
                   <Link

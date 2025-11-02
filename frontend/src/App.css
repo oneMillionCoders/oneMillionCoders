@@ -482,6 +482,46 @@ body {
     }
   }
 
+/* Improved bottom navigation styling (desktop + mobile) */
+.bottom-controls {
+  /* keep existing flex helpers from markup but provide a consistent gap */
+  gap: 0.5rem;
+}
+.bottom-controls .bottom-nav {
+  display: flex !important;
+  gap: 0.5rem;
+  width: 100%;
+  align-items: center;
+  flex-wrap: wrap;
+}
+/* Desktop: keep prev on left, push next to right */
+@media (min-width: 576px) {
+  .bottom-controls .bottom-nav {
+    justify-content: space-between !important;
+  }
+  .bottom-controls .bottom-nav .btn {
+    width: auto !important;
+    min-width: 120px;
+  }
+}
+/* Mobile: stack buttons and keep full width and comfortable tap targets */
+@media (max-width: 575px) {
+  .bottom-controls .bottom-nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .bottom-controls .bottom-nav .btn {
+    width: 100% !important;
+    padding: 0.65rem 0.75rem;
+    font-size: 1rem;
+  }
+}
+
+/* Style for the primary next button to make it stand out */
+.btn-next {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
   /* Improve table responsiveness */
   table {
     font-size: 0.85rem;
