@@ -1,5 +1,43 @@
 /* Ensure top row nav links are visible in both light and dark mode */
 
+/* Theme toggle button styling */
+.theme-toggle-btn {
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,0.3) !important;
+  color: #fff !important;
+  transition: all 0.3s ease !important;
+}
+
+.theme-toggle-btn:hover,
+.theme-toggle-btn:focus {
+  background: rgba(255,255,255,0.1) !important;
+  border-color: rgba(255,255,255,0.5) !important;
+  transform: scale(1.1);
+}
+
+.theme-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+/* Mobile career menu styling for light mode */
+.mobile-career-menu .list-group-item {
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.mobile-career-menu .list-group-item:hover {
+  background: var(--primary, #007bff) !important;
+  color: var(--primary-text, #fff) !important;
+  transform: translateX(5px);
+}
+
+.mobile-career-menu .list-group-item.active {
+  background: var(--primary, #007bff) !important;
+  color: var(--primary-text, #fff) !important;
+  border-color: var(--primary, #007bff) !important;
+}
+
 /* Make career path nav links white in light mode, and use navbar-text in dark mode */
 
 /* FORCE career path nav links to be white in all modes, selected or not, using high specificity */

@@ -366,6 +366,24 @@ export default function Layout({ children }) {
             </ul>
 
             <div className="d-flex flex-row align-items-center gap-2 ms-auto">
+                {/* Theme toggle - visible on all sizes */}
+                <button
+                  onClick={toggleTheme}
+                  className="btn btn-outline-light theme-toggle-btn"
+                  aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+                  title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+                  style={{ 
+                    minWidth: 'auto',
+                    padding: '0.5rem 0.75rem',
+                    fontSize: '1.25rem',
+                    lineHeight: 1,
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  {theme === "light" ? "🌙" : "☀️"}
+                </button>
+                
                 {/* Mobile: burger and logout on the right */}
                 <button
                   className="navbar-toggler d-lg-none"
@@ -383,15 +401,8 @@ export default function Layout({ children }) {
                 >
                   Logout
                 </button>
-                {/* Desktop: theme toggle and logout */}
-                <button
-                  onClick={toggleTheme}
-                  className="btn btn-secondary d-none d-lg-inline-flex"
-                  aria-label="Toggle dark/light mode"
-                  style={{ minWidth: 160 }}
-                >
-                  Switch to {theme === "light" ? "Dark" : "Light"} Mode
-                </button>
+                
+                {/* Desktop: logout */}
                 <button className="btn btn-danger d-none d-lg-inline-flex" onClick={handleLogout}>
                   Logout
                 </button>
@@ -412,20 +423,24 @@ export default function Layout({ children }) {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'var(--navbar-bg, rgba(0,0,0,0.96))',
+            background: 'var(--card-bg, #fff)',
             zIndex: 1100,
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch'
           }}
-          className="d-lg-none"
+          className="d-lg-none mobile-career-menu"
         >
           <div className="container py-3">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="m-0" style={{ color: 'var(--navbar-text, #fff)' }}>Choose a career</h5>
+            <div className="d-flex justify-content-between align-items-center mb-3 pb-3" style={{ borderBottom: '1px solid var(--checkmark-border, #ccc)' }}>
+              <h5 className="m-0" style={{ color: 'var(--card-text, #222)' }}>Choose a career</h5>
               <button
-                className="btn btn-outline-light btn-sm"
+                className="btn btn-outline-secondary btn-sm"
                 onClick={() => setMobileNavOpen(false)}
                 aria-label="Close menu"
+                style={{
+                  color: 'var(--card-text, #222)',
+                  borderColor: 'var(--checkmark-border, #ccc)'
+                }}
               >
                 ✕ Close
               </button>
@@ -441,9 +456,10 @@ export default function Layout({ children }) {
                     "list-group-item list-group-item-action py-3" + (isActive ? " active" : "")
                   }
                   style={{
-                    background: 'transparent',
-                    color: 'var(--navbar-text, #fff)',
-                    borderColor: 'rgba(255,255,255,0.15)'
+                    background: 'var(--card-bg, #fff)',
+                    color: 'var(--card-text, #222)',
+                    borderColor: 'var(--checkmark-border, #ccc)',
+                    transition: 'background 0.2s, color 0.2s'
                   }}
                 >
                   {c.label}
