@@ -10,10 +10,14 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
+      // Determine API base URL. If REACT_APP_BACKEND_URL is not set, fall back to relative path
+      // which will be proxied to the backend when running CRA with a proxy or will target
+      // the same host in production (served by Express).
+      const API_BASE = process.env.REACT_APP_BACKEND_URL || '';
+
       // Send login request to the backend
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/login`, {
+      const response = await fetch(`${API_BASE}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
