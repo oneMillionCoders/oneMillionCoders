@@ -168,6 +168,11 @@ app.post('/api/complete-section', authenticateUser, async (req, res) => {
 const buildPath = path.join(__dirname, '../frontend/build');
 app.use(express.static(buildPath));
 
+// Basic health endpoint for uptime monitors (returns 200 OK)
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', uptime: process.uptime() });
+});
+
 // Wildcard route to serve React app
 app.get('*', (req, res) => {
   res.sendFile(path.join(buildPath, 'index.html'));
