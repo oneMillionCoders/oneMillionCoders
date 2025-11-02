@@ -13,6 +13,20 @@
   background: var(--navbar-bg, #282c34) !important;
   color: var(--navbar-text, #fff) !important;
   transition: background 0.3s, color 0.3s;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure career path nav scrolls horizontally on very small screens */
+@media (max-width: 575px) {
+  .navbar.career-path-row {
+    overflow-x: auto;
+  }
+  
+  .career-path-row .navbar-nav {
+    flex-wrap: nowrap !important;
+  }
 }
 /* Ensure main content containers use theme variables for background and text */
 .container,
@@ -280,3 +294,372 @@ body {
 }
 
 /* All other elements should inherit colors from variables above */
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* Mobile Responsive Improvements                                              */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+/* Mobile-first improvements for small screens */
+@media (max-width: 767px) {
+  /* Adjust navbar height and spacing */
+  .navbar.fixed-top {
+    padding: 0.5rem 1rem !important;
+  }
+
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+
+  /* Make nav items stack properly on mobile */
+  .navbar-collapse {
+    background: var(--navbar-bg, #282c34);
+    padding: 1rem;
+    margin: 0 -1rem;
+    max-height: 70vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .navbar-collapse.show {
+    display: block !important;
+  }
+
+  /* Mobile career nav items - make them big and easy to tap */
+  .navbar.fixed-top .navbar-nav .nav-item {
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .navbar.fixed-top .navbar-nav .nav-link {
+    padding: 1rem 1.5rem !important;
+    font-size: 1.1rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: left;
+    width: 100%;
+    transition: background-color 0.2s;
+  }
+
+  .navbar.fixed-top .navbar-nav .nav-link:hover,
+  .navbar.fixed-top .navbar-nav .nav-link:active {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .navbar.fixed-top .navbar-nav .nav-link.active-link {
+    background-color: var(--primary, #007bff) !important;
+    border-left: 4px solid #fff;
+  }
+
+  /* Career path nav wrapping */
+  .career-path-row .navbar-nav {
+    font-size: 0.85rem;
+    gap: 0.25rem;
+    width: 100%;
+  }
+
+  .career-path-row .nav-link {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .career-path-row .nav-item {
+    margin-right: 0 !important;
+    margin-bottom: 0.25rem;
+  }
+
+  /* Make top navbar career items wrap and display better */
+  .navbar.fixed-top .navbar-nav {
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .navbar.fixed-top .nav-item {
+    margin-bottom: 0.5rem;
+  }
+
+  .navbar.fixed-top .nav-link {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.2;
+  }
+
+  /* Content padding adjustments */
+  main {
+    padding: 1rem !important;
+  }
+
+  /* Make buttons full-width on mobile */
+  .btn-outline-primary,
+  .btn-primary,
+  .btn-success,
+  .btn-danger {
+    font-size: 0.9rem;
+  }
+
+  /* Improve table responsiveness */
+  table {
+    font-size: 0.85rem;
+  }
+
+  /* Responsive headings */
+  h1, .h1 {
+    font-size: 1.75rem;
+  }
+
+  h2, .h2 {
+    font-size: 1.5rem;
+  }
+
+  h3, .h3 {
+    font-size: 1.25rem;
+  }
+
+  h4, .h4, h5, .h5 {
+    font-size: 1.1rem;
+  }
+
+  /* Adjust card padding */
+  .card {
+    padding: 1rem !important;
+  }
+
+  /* Make code blocks scrollable */
+  pre, code {
+    font-size: 0.85rem;
+    overflow-x: auto;
+    word-wrap: break-word;
+  }
+
+  /* Sidebar adjustments for mobile */
+  aside {
+    max-height: 50vh;
+  }
+
+  .checkmark-container {
+    margin-right: 6px;
+  }
+
+  .checkmark {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Mobile sidebar nav links */
+  .nav-link {
+    font-size: 0.9rem;
+    padding: 0.5rem !important;
+  }
+}
+
+/* Tablet improvements (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .navbar-brand {
+    font-size: 1.3rem;
+  }
+
+  main {
+    padding: 1.5rem !important;
+  }
+
+  h1, .h1 {
+    font-size: 2rem;
+  }
+
+  h2, .h2 {
+    font-size: 1.75rem;
+  }
+}
+
+/* Ensure touch-friendly tap targets on all screen sizes */
+.btn, .nav-link, button, a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Improve form inputs for mobile */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea,
+select {
+  font-size: 16px !important; /* Prevents zoom on iOS */
+  padding: 0.75rem;
+}
+
+/* Responsive images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent horizontal scroll */
+body {
+  overflow-x: hidden;
+}
+
+.container-fluid {
+  overflow-x: hidden;
+}
+
+/* Make tables responsive */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile-friendly spacing */
+@media (max-width: 767px) {
+  .mb-3, .my-3 {
+    margin-bottom: 1rem !important;
+  }
+
+  .mt-3, .my-3 {
+    margin-top: 1rem !important;
+  }
+
+  .p-3 {
+    padding: 0.75rem !important;
+  }
+
+  .px-3 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  .py-3 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+}
+
+/* ── Mobile responsiveness improvements ───────────────────────────────────── */
+
+/* Responsive text sizing for mobile */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  h1, .h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2, .h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3, .h3, .h5 {
+    font-size: 1.25rem;
+  }
+  
+  /* Ensure images are responsive */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Make tables scrollable on mobile */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Adjust padding for mobile */
+  .p-4 {
+    padding: 1rem !important;
+  }
+  
+  .p-3 {
+    padding: 0.75rem !important;
+  }
+  
+  /* Ensure buttons stack properly on mobile */
+  .btn {
+    white-space: normal;
+    word-wrap: break-word;
+  }
+  
+  /* Fix sidebar visibility on mobile - hide by default */
+  aside {
+    display: none !important;
+  }
+  
+  /* Adjust main content offset for mobile */
+  main.col-12 {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+  
+  /* Navbar brand text adjustment */
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+  
+  /* Career path nav responsive */
+  .career-path-row .navbar-nav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .career-path-row .nav-link {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+  
+  /* Card adjustments for mobile */
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  /* List padding adjustments */
+  ol, ul {
+    padding-left: 1.25rem;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 576px) {
+  h1, .h1 {
+    font-size: 1.5rem;
+  }
+  
+  h2, .h2 {
+    font-size: 1.25rem;
+  }
+  
+  .navbar-brand {
+    font-size: 1rem;
+  }
+  
+  .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .career-path-row .nav-link {
+    font-size: 0.75rem;
+    padding: 6px 10px;
+  }
+}
+
+/* Ensure touch-friendly tap targets on mobile */
+@media (max-width: 768px) {
+  .nav-link, .btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Make navigation easier to tap */
+  .navbar-toggler {
+    padding: 0.5rem;
+    font-size: 1.25rem;
+  }
+}

@@ -111,6 +111,8 @@ export default function Layout({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [completedSections, setCompletedSections] = useState([]);
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   // Fetch completed sections from the backend on app load
   useEffect(() => {
@@ -320,40 +322,51 @@ export default function Layout({ children }) {
     <>
       {/* primary nav */}
       <nav
-        className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark px-4"
-        style={{ height: H1 }}
+        className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark px-3 px-md-4"
+        style={{ height: 'auto', minHeight: H1 }}
       >
         <Link className="navbar-brand" to="/">
           OneMillionCoders
         </Link>
         {!isLoginPage && isLoggedIn && (
           <>
-            <ul className="navbar-nav">
-              {careers.map((c) => (
-                <li key={c.key} className="nav-item">
-                  <NavLink
-                    to={c.to}
-                    className={({ isActive }) =>
-                      "nav-link" + (isActive ? " active-link" : "")
-                    }
-                  >
-                    {c.label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-            <div className="d-flex ms-auto align-items-center">
-              <button
-                onClick={toggleTheme}
-                className="btn btn-secondary ms-3"
-                aria-label="Toggle dark/light mode"
-                style={{ minWidth: 160 }}
-              >
-                Switch to {theme === "light" ? "Dark" : "Light"} Mode
-              </button>
-              <button className="btn btn-danger ms-3" onClick={handleLogout}>
-                Logout
-              </button>
+            <button
+              className="navbar-toggler"
+              type="button"
+              onClick={() => setMobileNavOpen(!mobileNavOpen)}
+              aria-label="Toggle navigation"
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            <div className={`collapse navbar-collapse ${mobileNavOpen ? 'show' : ''}`}>
+              <ul className="navbar-nav me-auto">
+                {careers.map((c) => (
+                  <li key={c.key} className="nav-item">
+                    <NavLink
+                      to={c.to}
+                      className={({ isActive }) =>
+                        "nav-link" + (isActive ? " active-link" : "")
+                      }
+                      onClick={() => setMobileNavOpen(false)}
+                    >
+                      {c.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+              <div className="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2">
+                <button
+                  onClick={toggleTheme}
+                  className="btn btn-secondary"
+                  aria-label="Toggle dark/light mode"
+                  style={{ minWidth: 160 }}
+                >
+                  Switch to {theme === "light" ? "Dark" : "Light"} Mode
+                </button>
+                <button className="btn btn-danger" onClick={handleLogout}>
+                  Logout
+                </button>
+              </div>
             </div>
           </>
         )}
@@ -362,25 +375,27 @@ export default function Layout({ children }) {
       {/* sub‑navbar */}
       {(inDAA || inCSP || inNST) && (
         <nav
-          className="navbar career-path-row px-4"
+          className="navbar career-path-row px-3 px-md-4"
           style={{
             position: "fixed",
             top: H1,
-            height: H2,
+            height: 'auto',
+            minHeight: H2,
             width: "100%",
             zIndex: 1030,
-            borderBottom: "1px solid #444"
+            borderBottom: "1px solid #444",
+            flexWrap: 'wrap'
             // Remove background and color inline, let CSS handle it
           }}
         >
-          <ul className="navbar-nav flex-row">
+          <ul className="navbar-nav flex-row flex-wrap">
             {(inDAA
               ? careerPaths.daa
               : inCSP
               ? careerPaths.csp
               : careerPaths.nst
             ).map((p) => (
-              <li key={p.to} className="nav-item me-3">
+              <li key={p.to} className="nav-item me-2 me-md-3 mb-1">
                 <NavLink
                   to={buildLink(p)}
                   className={({ isActive }) =>
@@ -396,21 +411,34 @@ export default function Layout({ children }) {
       )}
 
       {/* layout grid */}
-      <div className="container-fluid p-0" style={{ marginTop: H1 + H2 }}>
+      <div className="container-fluid p-0" style={{ marginTop: H1 + H2, paddingTop: '1rem' }}>
         <div className="row g-0">
+          {/* Mobile sidebar toggle button */}
+          {(inDAA || inCSP || inNST) && (
+            <div className="d-md-none w-100 p-3 bg-light border-bottom">
+              <button
+                className="btn btn-outline-primary w-100"
+                onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+              >
+                {mobileSidebarOpen ? '✕ Close Menu' : '☰ Course Menu'}
+              </button>
+            </div>
+          )}
+
           {/* sidebar */}
           {(inDAA || inCSP || inNST) && (
             <aside
-              className="d-none d-md-block border-end p-3"
+              className={`border-end p-3 ${mobileSidebarOpen ? 'd-block' : 'd-none'} d-md-block`}
               style={{
-                position: "fixed",
-                top: H1 + H2,
-                bottom: 0,
-                width: "15%",
+                position: mobileSidebarOpen ? "relative" : "fixed",
+                top: mobileSidebarOpen ? "auto" : H1 + H2,
+                bottom: mobileSidebarOpen ? "auto" : 0,
+                width: mobileSidebarOpen ? "100%" : "15%",
                 overflowY: "auto",
                 background: "var(--card-bg)",
                 color: "var(--card-text)",
-                transition: "background 0.3s, color 0.3s"
+                transition: "background 0.3s, color 0.3s",
+                zIndex: mobileSidebarOpen ? 1020 : "auto"
               }}
             >
               <ul className="nav nav-pills flex-column position-relative">
@@ -463,6 +491,7 @@ export default function Layout({ children }) {
                                       "nav-link small" +
                                       (isActive ? " active-link" : "")
                                     }
+                                    onClick={() => setMobileSidebarOpen(false)}
                                   >
                                     {ch.label}
                                   </NavLink>
@@ -478,6 +507,7 @@ export default function Layout({ children }) {
                             "nav-link d-flex align-items-center" +
                             (isActive ? " active-link" : "")
                           }
+                          onClick={() => setMobileSidebarOpen(false)}
                           end
                         >
                           {item.label}
@@ -494,8 +524,8 @@ export default function Layout({ children }) {
           <main
             className={
               inDAA || inCSP || inNST
-                ? "col-md-10 offset-md-2 p-4"
-                : "col-12 p-4"
+                ? "col-12 col-md-10 offset-md-2 p-3 p-md-4"
+                : "col-12 p-3 p-md-4"
             }
             style={{
               minHeight: "100vh",
@@ -505,11 +535,11 @@ export default function Layout({ children }) {
             }}
           >
             {/* top prev/next */}
-            <div className="d-flex justify-content-between mb-4">
+            <div className="d-flex flex-column flex-sm-row justify-content-between mb-3 mb-md-4 gap-2">
               {prevItem ? (
                 <Link
                   to={buildLink(prevItem)}
-                  className="btn btn-outline-primary"
+                  className="btn btn-outline-primary btn-sm"
                 >
                   ← {prevItem.label}
                 </Link>
@@ -519,7 +549,7 @@ export default function Layout({ children }) {
               {nextItem ? (
                 <Link
                   to={buildLink(nextItem)}
-                  className="btn btn-outline-primary"
+                  className="btn btn-outline-primary btn-sm"
                 >
                   {nextItem.label} →
                 </Link>
@@ -532,7 +562,7 @@ export default function Layout({ children }) {
 
             {/* bottom prev/next/completed */}
             {!isLoginPage && (
-              <div className="d-flex align-items-center mt-4">
+              <div className="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 mt-4">
                 {/* ← Previous if it exists */}
                 {prevItem && (
                   <Link

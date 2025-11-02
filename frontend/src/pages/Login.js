@@ -49,7 +49,7 @@ export default function Login() {
         width: '100%',         // ← span the full viewport width 
         height: '100%',        // ← span the full viewport height 
         margin: 0,             // ← override any parent margins 
-        padding: 0,            // ← override any parent padding 
+        padding: '1rem',       // ← add padding for mobile spacing
         backgroundImage: "url('/images/background3.png')", 
         backgroundSize: 'cover', 
         backgroundPosition: 'top', 
@@ -57,7 +57,7 @@ export default function Login() {
         backgroundAttachment: 'scroll',
       }} 
     >
-      <div className="card p-4 shadow" style={{ width: '400px', backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>
+      <div className="card p-4 shadow" style={{ width: '100%', maxWidth: '400px', backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>
         <h2 className="text-center mb-4">Login</h2>
         {error && <div className="alert alert-danger">{error}</div>}
         <form onSubmit={handleLogin}>
