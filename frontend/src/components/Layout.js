@@ -113,6 +113,20 @@ export default function Layout({ children }) {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  // Lock body scroll when mobile career menu is open
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    if (mobileNavOpen || mobileSidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = prev || '';
+    }
+    return () => {
+      document.body.style.overflow = prev || '';
+    };
+  }, [mobileNavOpen, mobileSidebarOpen]);
 
   // Fetch completed sections from the backend on app load
   useEffect(() => {
@@ -160,9 +174,14 @@ export default function Layout({ children }) {
   }, [isLoggedIn, pathname, navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Clear the token
-    setIsLoggedIn(false); // Update state
-    navigate("/login", { replace: true }); // Redirect to login page and replace history
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutModal(false);
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    navigate("/login", { replace: true });
   };
 
   // Determine if the current page is the login page
@@ -338,39 +357,149 @@ export default function Layout({ children }) {
             >
               <span className="navbar-toggler-icon"></span>
             </button>
-            <div className={`collapse navbar-collapse ${mobileNavOpen ? 'show' : ''}`}>
-              <ul className="navbar-nav me-auto">
-                {careers.map((c) => (
-                  <li key={c.key} className="nav-item">
-                    <NavLink
-                      to={c.to}
-                      className={({ isActive }) =>
-                        "nav-link" + (isActive ? " active-link" : "")
-                      }
-                      onClick={() => setMobileNavOpen(false)}
-                    >
-                      {c.label}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-              <div className="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2">
+            {/* Mobile logout next to burger */}
+            <button
+              type="button"
+              className="btn btn-outline-danger btn-sm d-lg-none ms-2"
+              onClick={handleLogout}
+              aria-label="Logout"
+            >
+              Logout
+            </button>
+            {/* Desktop careers list */}
+            <ul className="navbar-nav ms-3 d-none d-lg-flex">
+              {careers.map((c) => (
+                <li key={c.key} className="nav-item">
+                  <NavLink
+                    to={c.to}
+                    className={({ isActive }) =>
+                      "nav-link" + (isActive ? " active-link" : "")
+                    }
+                  >
+                    {c.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+
+            <div className="d-flex flex-column flex-lg-row align-items-center gap-2 ms-auto">
                 <button
-                  onClick={toggleTheme}
+                onClick={toggleTheme}
                   className="btn btn-secondary"
                   aria-label="Toggle dark/light mode"
                   style={{ minWidth: 160 }}
                 >
                   Switch to {theme === "light" ? "Dark" : "Light"} Mode
                 </button>
-                <button className="btn btn-danger" onClick={handleLogout}>
+              {/* Show Logout on the right only on lg+ to avoid duplicate with mobile-left logout */}
+              <button className="btn btn-danger d-none d-lg-inline-flex" onClick={handleLogout}>
                   Logout
                 </button>
               </div>
-            </div>
           </>
         )}
       </nav>
+
+      {/* Mobile careers full-screen overlay menu */}
+      {mobileNavOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Choose a career"
+          style={{
+            position: 'fixed',
+            top: H1,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'var(--navbar-bg, rgba(0,0,0,0.96))',
+            zIndex: 1100,
+            overflowY: 'auto',
+            WebkitOverflowScrolling: 'touch'
+          }}
+          className="d-lg-none"
+        >
+          <div className="container py-3">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h5 className="m-0" style={{ color: 'var(--navbar-text, #fff)' }}>Choose a career</h5>
+              <button
+                className="btn btn-outline-light btn-sm"
+                onClick={() => setMobileNavOpen(false)}
+                aria-label="Close menu"
+              >
+                ✕ Close
+              </button>
+            </div>
+
+            <div className="list-group">
+              {careers.map((c) => (
+                <NavLink
+                  key={c.key}
+                  to={c.to}
+                  onClick={() => setMobileNavOpen(false)}
+                  className={({ isActive }) =>
+                    "list-group-item list-group-item-action py-3" + (isActive ? " active" : "")
+                  }
+                  style={{
+                    background: 'transparent',
+                    color: 'var(--navbar-text, #fff)',
+                    borderColor: 'rgba(255,255,255,0.15)'
+                  }}
+                >
+                  {c.label}
+                </NavLink>
+              ))}
+            </div>
+
+            {(inDAA || inCSP || inNST) && (
+              <>
+                <hr className="my-4" style={{ borderColor: 'rgba(255,255,255,0.15)' }} />
+                <h6 className="mb-2" style={{ color: 'var(--navbar-text, #fff)' }}>Course contents</h6>
+                <div className="list-group mb-3">
+                  {sidebarItems.map((item) => {
+                    const hasChildren = Array.isArray(item.children);
+                    if (hasChildren) {
+                      return (
+                        <div key={item.to} className="mb-2">
+                          <div className="list-group-item" style={{ background: 'transparent', color: 'var(--navbar-text, #fff)', borderColor: 'rgba(255,255,255,0.15)' }}>
+                            <strong>{item.label}</strong>
+                          </div>
+                          {item.children.map((ch) => (
+                            <NavLink
+                              key={ch.to}
+                              to={buildLink(ch)}
+                              onClick={() => setMobileNavOpen(false)}
+                              className={({ isActive }) =>
+                                "list-group-item list-group-item-action" + (isActive ? " active" : "")
+                              }
+                              style={{ background: 'transparent', color: 'var(--navbar-text, #fff)', borderColor: 'rgba(255,255,255,0.15)' }}
+                            >
+                              {ch.label}
+                            </NavLink>
+                          ))}
+                        </div>
+                      );
+                    }
+                    return (
+                      <NavLink
+                        key={item.to}
+                        to={buildLink(item)}
+                        onClick={() => setMobileNavOpen(false)}
+                        className={({ isActive }) =>
+                          "list-group-item list-group-item-action" + (isActive ? " active" : "")
+                        }
+                        style={{ background: 'transparent', color: 'var(--navbar-text, #fff)', borderColor: 'rgba(255,255,255,0.15)' }}
+                      >
+                        {item.label}
+                      </NavLink>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* sub‑navbar */}
       {(inDAA || inCSP || inNST) && (
@@ -385,9 +514,24 @@ export default function Layout({ children }) {
             zIndex: 1030,
             borderBottom: "1px solid #444",
             flexWrap: 'wrap'
-            // Remove background and color inline, let CSS handle it
           }}
         >
+          {/* Inline opener for course contents on mobile, appears before Excel/SQL list */}
+          <button
+            className="btn btn-sm d-md-none me-2"
+            onClick={() => setMobileSidebarOpen(true)}
+            aria-label="Open course contents"
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(255,255,255,0.3)',
+              color: 'var(--navbar-text, #fff)',
+              padding: '0.4rem 0.6rem',
+              fontSize: '1rem'
+            }}
+          >
+            ☰
+          </button>
+
           <ul className="navbar-nav flex-row flex-wrap">
             {(inDAA
               ? careerPaths.daa
@@ -410,35 +554,25 @@ export default function Layout({ children }) {
         </nav>
       )}
 
+
       {/* layout grid */}
       <div className="container-fluid p-0" style={{ marginTop: H1 + H2, paddingTop: '1rem' }}>
         <div className="row g-0">
-          {/* Mobile sidebar toggle button */}
-          {(inDAA || inCSP || inNST) && (
-            <div className="d-md-none w-100 p-3 bg-light border-bottom">
-              <button
-                className="btn btn-outline-primary w-100"
-                onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-              >
-                {mobileSidebarOpen ? '✕ Close Menu' : '☰ Course Menu'}
-              </button>
-            </div>
-          )}
+          {/* Mobile sidebar toggle button removed in favor of floating opener */}
 
-          {/* sidebar */}
+          {/* sidebar (desktop) */}
           {(inDAA || inCSP || inNST) && (
             <aside
-              className={`border-end p-3 ${mobileSidebarOpen ? 'd-block' : 'd-none'} d-md-block`}
+              className={`border-end p-3 d-none d-md-block`}
               style={{
-                position: mobileSidebarOpen ? "relative" : "fixed",
-                top: mobileSidebarOpen ? "auto" : H1 + H2,
-                bottom: mobileSidebarOpen ? "auto" : 0,
-                width: mobileSidebarOpen ? "100%" : "15%",
+                position: "fixed",
+                top: H1 + H2,
+                bottom: 0,
+                width: "15%",
                 overflowY: "auto",
                 background: "var(--card-bg)",
                 color: "var(--card-text)",
-                transition: "background 0.3s, color 0.3s",
-                zIndex: mobileSidebarOpen ? 1020 : "auto"
+                transition: "background 0.3s, color 0.3s"
               }}
             >
               <ul className="nav nav-pills flex-column position-relative">
@@ -455,17 +589,12 @@ export default function Layout({ children }) {
                       {/* Checkmark */}
                       <div
                         className="checkmark-container"
-                        style={{ justifyContent: "flex-start" }} // ← force top‑alignment
+                        style={{ justifyContent: "flex-start" }}
                       >
-                        <div
-                          className={`checkmark ${isCompleted ? "alive" : ""}`}
-                        />
-                        {/* always render the line, but hide it on the last item */}
+                        <div className={`checkmark ${isCompleted ? "alive" : ""}`} />
                         <div
                           className="vertical-line"
-                          style={{
-                            visibility: isLastItem ? "hidden" : "visible",
-                          }}
+                          style={{ visibility: isLastItem ? "hidden" : "visible" }}
                         />
                       </div>
 
@@ -488,10 +617,8 @@ export default function Layout({ children }) {
                                   <NavLink
                                     to={buildLink(ch)}
                                     className={({ isActive }) =>
-                                      "nav-link small" +
-                                      (isActive ? " active-link" : "")
+                                      "nav-link small" + (isActive ? " active-link" : "")
                                     }
-                                    onClick={() => setMobileSidebarOpen(false)}
                                   >
                                     {ch.label}
                                   </NavLink>
@@ -504,10 +631,8 @@ export default function Layout({ children }) {
                         <NavLink
                           to={buildLink(item)}
                           className={({ isActive }) =>
-                            "nav-link d-flex align-items-center" +
-                            (isActive ? " active-link" : "")
+                            "nav-link d-flex align-items-center" + (isActive ? " active-link" : "")
                           }
-                          onClick={() => setMobileSidebarOpen(false)}
                           end
                         >
                           {item.label}
@@ -595,6 +720,129 @@ export default function Layout({ children }) {
         </div>
       </div>
 
+      {/* Mobile Course Drawer (left side with checkmarks) */}
+      {mobileSidebarOpen && (inDAA || inCSP || inNST) && (
+        <div className="d-md-none" style={{ position: 'fixed', top: H1 + H2, left: 0, right: 0, bottom: 0, zIndex: 1100, display: 'flex' }}>
+          {/* Drawer */}
+          <div
+            style={{
+              width: '80vw',
+              maxWidth: 320,
+              background: 'var(--card-bg)',
+              color: 'var(--card-text)',
+              borderRight: '1px solid rgba(0,0,0,0.2)',
+              overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              boxShadow: '2px 0 12px rgba(0,0,0,0.3)'
+            }}
+          >
+            <div className="p-3 d-flex justify-content-between align-items-center border-bottom">
+              <strong>Course Contents</strong>
+              <button className="btn btn-outline-secondary btn-sm" onClick={() => setMobileSidebarOpen(false)} aria-label="Close course menu">✕</button>
+            </div>
+            <ul className="nav nav-pills flex-column position-relative p-3">
+              {sidebarItems.map((item, index) => {
+                const hasChildren = Array.isArray(item.children);
+                const isCompleted = completedSections.includes(item.to);
+                const isLastItem = index === sidebarItems.length - 1;
+                return (
+                  <li key={item.to} className="nav-item d-flex align-items-center position-relative mb-1">
+                    <div className="checkmark-container" style={{ justifyContent: 'flex-start' }}>
+                      <div className={`checkmark ${isCompleted ? 'alive' : ''}`} />
+                      <div className="vertical-line" style={{ visibility: isLastItem ? 'hidden' : 'visible' }} />
+                    </div>
+                    {hasChildren ? (
+                      <>
+                        <button
+                          className={"nav-link w-100 text-start" + (openMenus[item.to] ? " active-link" : "")}
+                          onClick={() => toggleMenu(item.to)}
+                        >
+                          {item.label}
+                        </button>
+                        {openMenus[item.to] && (
+                          <ul className="nav flex-column ms-3 mt-2">
+                            {item.children.map((ch) => (
+                              <li key={ch.to}>
+                                <NavLink
+                                  to={buildLink(ch)}
+                                  className={({ isActive }) => "nav-link small" + (isActive ? " active-link" : "")}
+                                  onClick={() => setMobileSidebarOpen(false)}
+                                >
+                                  {ch.label}
+                                </NavLink>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </>
+                    ) : (
+                      <NavLink
+                        to={buildLink(item)}
+                        className={({ isActive }) => "nav-link d-flex align-items-center" + (isActive ? " active-link" : "")}
+                        onClick={() => setMobileSidebarOpen(false)}
+                        end
+                      >
+                        {item.label}
+                      </NavLink>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          {/* Backdrop */}
+          <div style={{ flex: 1, background: 'rgba(0,0,0,0.35)' }} onClick={() => setMobileSidebarOpen(false)} />
+        </div>
+      )}
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.6)',
+            zIndex: 1200,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          onClick={() => setShowLogoutModal(false)}
+        >
+          <div
+            className="card p-4 shadow-lg"
+            style={{
+              maxWidth: 400,
+              width: '90%',
+              background: 'var(--card-bg, #fff)',
+              color: 'var(--card-text, #222)',
+              borderRadius: 12,
+              animation: 'fadeIn 0.2s ease'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h5 className="mb-3">Confirm Logout</h5>
+            <p className="mb-4">Are you sure you want to log out?</p>
+            <div className="d-flex gap-2 justify-content-end">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowLogoutModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={confirmLogout}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </>
   );
